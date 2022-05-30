@@ -82,7 +82,6 @@ public class GameObject {
         this.updated = true;
     }
 
-
     public void moveForward(float amount){
         Vector movement = new Vector(this.rot, amount);
         this.x += movement.getX();
@@ -98,13 +97,6 @@ public class GameObject {
 
     }
 
-    public void moveNormalised(float x, float y, float magnitude){
-        Vector movement = Vector.Vec2(x, y);
-        Vector normalised = new Vector(movement.getDirection2D(), magnitude);
-        this.x += normalised.getX();
-        this.y += normalised.getY();
-        this.updated = true;
-    }
     /**
      * Apply a vector translation to this object's position and set its update flag to true.
      * Does not regenerate the transform matrix.
@@ -131,6 +123,7 @@ public class GameObject {
     public void generateMatrix(){
         this.x += frameTranslation.getX();
         this.y += frameTranslation.getY();
+
         this.transform = Matrix.Identity(4)
         .translate(x, y, 0)
         .rotate(0, 0, rot)

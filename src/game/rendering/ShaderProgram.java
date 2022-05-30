@@ -46,13 +46,13 @@ public class ShaderProgram {
     /**
      * Create an openGL shader program.
      */
-    public void create(){
+    private void create(){
         System.out.println("STARTED SHADER BINDING: " + glGetError());
         System.out.println("LOADING SHADER SOURCE");
         
         try{
-            vertexSource = Files.readString(Path.of("resources/" + vertexPath));
-            fragSource = Files.readString(Path.of("resources/" + fragPath));
+            vertexSource = Files.readString(Path.of("res/" + vertexPath));
+            fragSource = Files.readString(Path.of("res/" + fragPath));
         }
         catch(IOException exception){
             System.err.println("COULDN'T LOAD SHADER SOURCE.\nError is " + exception);
@@ -71,7 +71,7 @@ public class ShaderProgram {
             System.err.println("ERROR COMPILING VERTEX SHADER: " + glGetShaderInfoLog(vShader));
             System.err.println("TRYING TO LOAD FALLBACK VERTEX SHADER.");
             try{
-                vertexSource = Files.readString(Path.of("resources/" + fallbackVertexPath));
+                vertexSource = Files.readString(Path.of("res/" + fallbackVertexPath));
             } catch (IOException e) {
                 System.err.println("COULDN'T LOAD SHADER SOURCE.\nError is " + e);
             }
@@ -90,7 +90,7 @@ public class ShaderProgram {
             System.err.println("ERROR COMPILING FRAGMENT SHADER: " + glGetShaderInfoLog(fShader));
             System.err.println("TRYING TO LOAD FALLBACK FRAGMENT SHADER.");
             try{
-                fragSource = Files.readString(Path.of("resources/"+ fallbackFragmentPath));
+                fragSource = Files.readString(Path.of("res/"+ fallbackFragmentPath));
             } catch (IOException e){
                 System.err.println("COULDN'T LOAD SHADER SOURCE. \nError is " + e);
             }

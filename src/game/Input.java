@@ -5,11 +5,9 @@ public final class Input {
     private static final boolean[] keysHeld = new boolean[GLFW_KEY_LAST];
     private static final boolean[] keysFirstPressed = new boolean[GLFW_KEY_LAST];
     private static final boolean[] keysReleased = new boolean[GLFW_KEY_LAST];
+    private static final boolean[] mouseButtons = new boolean[GLFW_MOUSE_BUTTON_LAST];
     private static double mouseX = 0;
     private static double mouseY = 0;
-    private static boolean RMB = false;
-    private static boolean LMB = false;
-    private static boolean MMB = false;
 
     public static void enable(Window window){
 
@@ -30,16 +28,11 @@ public final class Input {
         });
 
         glfwSetMouseButtonCallback(window.getWindow(), (long windowHandle, int button, int action, int mods) -> {
-            if(action == GLFW_PRESS){
-                Input.LMB = button == GLFW_MOUSE_BUTTON_LEFT;
-                Input.RMB = button == GLFW_MOUSE_BUTTON_RIGHT;
-                Input.MMB = button == GLFW_MOUSE_BUTTON_MIDDLE;
-            } else if (action == GLFW_RELEASE) {
-                Input.LMB = button != GLFW_MOUSE_BUTTON_LEFT;
-                Input.RMB = button != GLFW_MOUSE_BUTTON_RIGHT;
-                Input.MMB = button != GLFW_MOUSE_BUTTON_MIDDLE;
+            if(action == GLFW_RELEASE){
+                Input.mouseButtons[button] = false;
+            } else if (action == GLFW_PRESS) {
+                Input.mouseButtons[button] = true;
             }
-
         });
     }
 
