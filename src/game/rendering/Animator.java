@@ -5,127 +5,85 @@ import game.GameObject;
 import java.util.HashMap;
 
 public class Animator {
-    private final HashMap<String, Animation> animations = new HashMap<>();
+    private final HashMap<GameObject, HashMap<String, Animation>> animations = new HashMap<>();
     private double time;
     public Animator(){
         this.time = 0;
     }
 
-    public void addAnimation(String name, Animation animation){
-        this.animations.put(name, animation);
+    public void add(GameObject object, String name, Animation animation){
+        if(animations.containsKey(object)){
+            animations.get(object).put(name, animation);
+        }
+        else{
+            animations.put(object, new HashMap<>());
+            animations.get(object).put(name, animation);
+        }
     }
 
-    public void addAnimation(String name, GameObject object, float interval, int start, int end){
+    public void add(GameObject object, String name, float interval, int start, int end){
         Animation anim = new Animation(object, interval, start, end);
-        this.animations.put(name, anim);
+        if(animations.containsKey(object)){
+            animations.get(object).put(name, anim);
+        }
+        else{
+            animations.put(object, new HashMap<>());
+            animations.get(object).put(name, anim);
+        }
     }
 
-    public void startAnimation(String name){
-        for(Animation anim : animations.values()){
-            if(anim.isPlaying() && anim.getObject() == animations.get(name).getObject()){
+    public void add(GameObject object, String name, float interval, int... frames){
+        Animation anim = new Animation(object, interval, frames);
+        if(animations.containsKey(object)){
+            animations.get(object).put(name, anim);
+        }
+        else{
+            animations.put(object, new HashMap<>());
+            animations.get(object).put(name, anim);
+        }
+    }
+
+    public void animate(double time) {
+        this.time = time;
+        for (GameObject object : animations.keySet()) {
+            for (Animation anim : animations.get(object).values()) {
+                anim.update(time);
+            }
+        }
+    }
+
+    public void start(GameObject object, String name){
+        for(Animation anim : animations.get(object).values()){
+            if(anim.isPlaying()){
 //                System.out.println("WARNING: ANIMATION ALREADY PLAYING. INTERRUPTING.");
                 anim.stop();
                 break;
             }
         }
-        this.animations.get(name).start(time);
+
+        this.animations
+                .get(object)
+                .get(name)
+                .start(time);
     }
 
-    public void animate(double time){
-        this.time = time;
-        for(Animation anim : animations.values()){
-            anim.update(time);
-        }
+    public void stop(GameObject object, String name){
+        animations.get(object).get(name).stop();
     }
 
-    public void pauseAnimation(String name){
-        Animation anim = animations.get(name);
-        if(anim.isPlaying()){
-            anim.pause();
-        }
+    public void pause(GameObject object, String name){
+        animations.get(object).get(name).pause();
     }
 
-    public void resumeAnimation(String name){
-        Animation anim = animations.get(name);
-        if(!anim.isPlaying()){
-            anim.resume(time);
-        }
-    }
-
-    public void pauseAnimations(){
-        for(Animation anim : animations.values()){
-            if(anim.isPlaying()){
-                anim.pause();
-            }
-        }
-    }
-
-    public void resumeAnimations(){
-        for(Animation anim : animations.values()){
-            if(!anim.isPlaying()) {
-                anim.resume(time);
-            }
-        }
-    }
-
-    public void pauseAnimations(String... names){
-        for(String name : names) {
-            Animation anim = animations.get(name);
-            if(anim.isPlaying()){
-                anim.pause();
-            }
-        }
-    }
-
-    public void resumeAnimations(String... names){
-        for(String name : names){
-            Animation anim = animations.get(name);
-            if(!anim.isPlaying()){
-                anim.resume(time);
-            }
-        }
-    }
-    public void stopAnimations(){
-        for(Animation anim : animations.values()){
-            if(anim.isPlaying()) {
-                anim.stop();
-            }
-        }
-    }
-
-    public void startAnimations(){
-        for(Animation anim : animations.values()){
-            if(!anim.isPlaying()) {
-                anim.start(time);
-            }
-        }
-    }
-
-    public void stopAnimations(String... names){
-        for(String name : names){
-            Animation anim = animations.get(name);
+    public void resume(GameObject object, String name){
+        for(Animation anim : animations.get(object).values()){
             if(anim.isPlaying()){
                 anim.stop();
             }
         }
-    }
-
-    public void startAnimations(String... names){
-        for(String name : names){
-            Animation anim = animations.get(name);
-            if(!anim.isPlaying()){
-                anim.start(time);
-            }
-        }
-    }
-    public void stopAnimation(String name){
-        Animation anim = animations.get(name);
-        if(anim.isPlaying()){
-            anim.stop();
-        }
-    }
-
-    public boolean isPlaying(String name){
-        return this.animations.get(name).isPlaying();
+        this.animations
+                .get(object)
+                .get(name)
+                .resume(time);
     }
 }

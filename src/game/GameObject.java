@@ -1,4 +1,5 @@
 package game;
+import game.rendering.BatchedRenderer;
 import game.rendering.TextureAtlas;
 import game.rendering.math.Matrix;
 import game.rendering.math.Vector;
@@ -33,6 +34,7 @@ public class GameObject {
         this.texture = texture;
         this.textureAtlas = textureAtlas;
         this.id = objectCount;
+        BatchedRenderer.add(this);
         objectCount++;
     }
 

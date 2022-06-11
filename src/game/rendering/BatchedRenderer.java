@@ -7,60 +7,56 @@ import java.util.ArrayList;
 import static org.lwjgl.opengl.GL33.*;
 
 public class BatchedRenderer {
-    private final int VertexLength = 5;
-    private final int VerticesPerObject;
-    private final int IndicesPerObject;
-    private final VAO vao;
-    private TextureAtlas textureSheet;
-    private final ArrayList<GameObject> objects = new ArrayList<>();
-    private final float[] vertices;
-    private final ArrayList<Float> VBOdata = new ArrayList<>();
-    private int[] EBOdata = new int[]{};
-    private final int[] indices;
-    private boolean objectsUpdated;
+    private static final int VertexLength = 5;
+    private static int VerticesPerObject = 0;
+    private static int IndicesPerObject = 0;
+    private static final VAO vao = new VAO();
+    private static final ArrayList<GameObject> objects = new ArrayList<>();
+    private static float[] vertices = new float[]{};
+    private static final ArrayList<Float> VBOdata = new ArrayList<>();
+    private static int[] EBOdata = new int[]{};
+    private static int[] indices = new int[]{};
+    private static boolean objectsUpdated;
 
-    public BatchedRenderer(float[] vertices, int[] indices){
+    public static void InitializeRectRenderer(){
+        Initialize(new float[]{
+                0.5f, 0.5f, 1.0f, 1.0f, 0,
+                0.5f, -0.5f, 1.0f, 0.0f, 0,
+                -0.5f, -0.5f, 0.0f, 0.0f, 0,
+                -0.5f, 0.5f, 0.0f, 1.0f, 0
+        }, new int[]{
+                0, 1, 3,
+                3, 2, 1
+        });
+    }
+
+    public static void Initialize(float[] objectVertices, int[] objectIndices){
         objectsUpdated = false;
-        this.vertices = vertices;
-        this.indices = indices;
-        this.VerticesPerObject = vertices.length / VertexLength;
-        this.IndicesPerObject = indices.length;
-        this.vao = new VAO(new float[]{}, new int[]{}, 0);
+        vertices = objectVertices;
+        indices = objectIndices;
+        VerticesPerObject = vertices.length / VertexLength;
+        IndicesPerObject = indices.length;
         vao.use();
         vao.uploadVertexData(GL_DYNAMIC_DRAW);
         vao.addVertexArrayAttribute(0, 2, VertexLength, 0); //coordinates
         vao.addVertexArrayAttribute(1, 2, VertexLength, 2); //texture coordinates
         vao.addVertexArrayAttribute(2, 1, VertexLength, 4); //texture map
         vao.uploadIndexData(GL_DYNAMIC_DRAW);
-        
+
         int err = glGetError();
         if(err != 0){
             System.err.println("FAILED TO CREATE VAO: " + err);
         }
     }
 
-    public static BatchedRenderer SquareRenderer(){
-        return new BatchedRenderer(new float[]{
-            0.5f, 0.5f, 1.0f, 1.0f, 0,
-            0.5f, -0.5f, 1.0f, 0.0f, 0,
-            -0.5f, -0.5f, 0.0f, 0.0f, 0,
-            -0.5f, 0.5f, 0.0f, 1.0f, 0
-        }, new int[]{
-            0, 1, 3,
-            3, 2, 1
-        });
-    }
-
-    public GameObject create(float x, float y, float rot, float width, float height, int texture, TextureAtlas atlas){
-        GameObject object = new GameObject(x, y, rot, width, height, texture, atlas);
+    public static void add(GameObject object){
         objects.add(object);
         objectsUpdated = true;
-        return object;
     }
 
-    private void updateVertexData(){
+    private static void updateVertexData(){
         boolean updated = false;
-        for(GameObject object : objects){
+        for(GameObject object : BatchedRenderer.objects){
             updated = object.updated || updated;
             if(object.updated){
                 object.generateMatrix();
@@ -68,14 +64,14 @@ public class BatchedRenderer {
         }
 
         if(updated){
-            VBOdata.clear();
-            for(GameObject object : objects){
+            BatchedRenderer.VBOdata.clear();
+            for(GameObject object : BatchedRenderer.objects){
 
                 ArrayList<float[]> vertices = new ArrayList<>();
                 for(int i = 0; i < VerticesPerObject; i++){
                     float[] vertexData = new float[VertexLength];
                     for(int j = 0; j < VertexLength; j++){
-                        vertexData[j] = this.vertices[i * VertexLength + j];
+                        vertexData[j] = BatchedRenderer.vertices[i * VertexLength + j];
                     }
                     vertices.add(vertexData);
                 }
@@ -107,14 +103,14 @@ public class BatchedRenderer {
         }
     }
 
-    private void updateIndexData(){
+    private static void updateIndexData(){
         if(objectsUpdated){
-            int objectCount = this.objects.size();
-            this.EBOdata = new int[objectCount * IndicesPerObject];
+            int objectCount = BatchedRenderer.objects.size();
+            EBOdata = new int[objectCount * IndicesPerObject];
             for(int i = 0; i < objectCount; i++){
                 int offset = i * VerticesPerObject;
                 for(int j = 0; j < IndicesPerObject; j++){
-                    EBOdata[i * IndicesPerObject + j] = this.indices[j] + offset;
+                    EBOdata[i * IndicesPerObject + j] = indices[j] + offset;
                 }
             }
             objectsUpdated = false;
@@ -122,12 +118,12 @@ public class BatchedRenderer {
         }
     }
 
-    private void uploadIndexData(){
+    private static void uploadIndexData(){
         vao.setIndexArrayData(EBOdata);
         vao.uploadIndexData(GL_DYNAMIC_DRAW);
     }
 
-    private void uploadVertexData(){
+    private static void uploadVertexData(){
         float[] VBOArray = new float[VBOdata.size()];
         for(int i = 0; i < VBOdata.size(); i++){
             VBOArray[i] = VBOdata.get(i);
@@ -141,7 +137,7 @@ public class BatchedRenderer {
      * Draw all objects created by this renderer.
      * @param rebindVAO whether to rebind the internal vertex attribute array. Set this to true if you are using multiple renderers.
      */
-    public void drawAll(boolean rebindVAO){
+    public static void drawAll(boolean rebindVAO){
         if(rebindVAO){
             vao.use();
         }

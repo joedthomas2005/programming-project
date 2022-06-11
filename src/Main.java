@@ -13,7 +13,7 @@ class Main{
         ShaderProgram shader = new ShaderProgram("Batch");
         shader.use();
 
-        BatchedRenderer renderer = BatchedRenderer.SquareRenderer();
+        BatchedRenderer.InitializeRectRenderer();
         OrthoCamera2D camera = new OrthoCamera2D(0, 0, window.getWidth(), window.getHeight(), shader.getID());
         camera.uploadProjectionUniform();
 
@@ -22,16 +22,15 @@ class Main{
         TextureAtlas martin = new TextureAtlas("res/elf.png", 3, 1, true);
         martin.load(shader.getID());
 
-        GameObject elf = renderer.create(window.getWidth() / 2.0f, window.getHeight() / 2.0f, 0, 160, 280, 0, martin);
-        Animation walk = new Animation(elf, 0.2f, 1, 3);
-        Animation idle = new Animation(elf, 0.0f, 0);
-        animator.addAnimation("elfWalk", walk);
-        animator.addAnimation("elfIdle", idle);
+        GameObject elf = new GameObject(window.getWidth() / 2.0f, window.getHeight() / 2.0f, 0, 160, 280, 0, martin);
+
+        animator.add(elf, "walk", 0.2f, 1, 3);
+        animator.add(elf, "idle", 0.0f, 0);
 
         double time = glfwGetTime();
         double lastTime;
         double delta;
-        animator.startAnimation("elfIdle");
+        animator.start(elf, "idle");
         while(!window.shouldClose()){
             lastTime = time;
             time = glfwGetTime();
@@ -54,13 +53,13 @@ class Main{
 
             if(Input.keyPressedDown(GLFW_KEY_W) || Input.keyPressedDown(GLFW_KEY_S) ||
             Input.keyPressedDown(GLFW_KEY_A) || Input.keyPressedDown(GLFW_KEY_D)){
-                animator.startAnimation("elfWalk");
+                animator.start(elf, "walk");
             } else if (!Input.keyIsDown(GLFW_KEY_W) && !Input.keyIsDown(GLFW_KEY_S) &&
                 !Input.keyIsDown(GLFW_KEY_A) && !Input.keyIsDown(GLFW_KEY_D)){
-                animator.startAnimation("elfIdle");
+                animator.start(elf, "idle");
             }
             camera.uploadViewUniform();
-            renderer.drawAll(false);
+            BatchedRenderer.drawAll(false);
             window.update();
         }
         window.end();
