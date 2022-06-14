@@ -13,21 +13,19 @@ import static org.lwjgl.opengl.GL33.*;
 public class OrthoCamera2D {
     private Matrix view;
     private final Matrix projection;
-    private final int[] viewLocations;
-    private final int[] projectionLocations;
+    private final int viewLocation;
+    private final int projectionLocation;
     private float x, y;
     private boolean updated;
 
-    public OrthoCamera2D(float x, float y, float width, float height, int... shaderPrograms){
+    public OrthoCamera2D(float x, float y, float width, float height){
         this.view = Matrix.Translation(-x, -y, 0);
         this.projection = Matrix.Ortho(0, width, 0, height, -1, 1);
-        this.viewLocations = new int[shaderPrograms.length];
-        this.projectionLocations = new int[shaderPrograms.length];
-        for(int i = 0; i < shaderPrograms.length; i++) {
-            this.viewLocations[i] = glGetUniformLocation(shaderPrograms[i], "view");
-            this.projectionLocations[i] = glGetUniformLocation(shaderPrograms[i], "projection");
-        }
+
+        this.viewLocation = glGetUniformLocation(BatchedRenderer.getShaderID(), "view");
+        this.projectionLocation = glGetUniformLocation(BatchedRenderer.getShaderID(), "projection");
         this.updated = true;
+        use();
     }
 
     
@@ -43,41 +41,32 @@ public class OrthoCamera2D {
         this.updated = true;
     }
 
-    
-    /** 
-     * Return the view matrix of the camera.
-     * @return Matrix
-     */
-    public Matrix getView(){
-        return this.view;
-    }
-
-    
-    /** 
-     * Return the projection matrix of the camera. This will not change. 
-     * @return Matrix
-     */
-    public Matrix getProjection(){
-        return this.projection;
-    }
 
     /**
      * Send the view matrix of this camera to the shader if it has changed.
      * If the camera has not moved then nothing will be done.
      */
-    public void uploadViewUniform(){
-        if(updated){
-            for(int shader : viewLocations) glUniformMatrix4fv(shader, true, view.toArray());
-            updated = false;
-        }
+    private void uploadViewUniform(){
+        glUniformMatrix4fv(viewLocation, true, view.toArray());
     }
 
     /**
      * Send the projection matrix of this camera to the shader.
      * You should only have to do this once. 
      */
-    public void uploadProjectionUniform(){
-        glGetError();
-        for(int shader : projectionLocations) glUniformMatrix4fv(shader, true, projection.toArray());
+    private void uploadProjectionUniform(){
+        glUniformMatrix4fv(projectionLocation, true, projection.toArray());
+    }
+
+    public void use(){
+        uploadProjectionUniform();
+        uploadViewUniform();
+    }
+
+    public void update(){
+        if(updated){
+            uploadViewUniform();
+            updated = false;
+        }
     }
 }

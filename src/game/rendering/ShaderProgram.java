@@ -114,7 +114,6 @@ public class ShaderProgram {
 
         glLinkProgram(program);
         System.out.println("SHADER PROGRAM LINKED: " + glGetError());
-
         glDeleteShader(vShader);
         glDeleteShader(fShader);
         System.out.println("SHADERS DELETED: " + glGetError());

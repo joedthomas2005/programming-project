@@ -25,9 +25,10 @@ public class TextureAtlas {
         this.columnWidth = 1.0f / columns;
         this.rowHeight = 1.0f / rows;
         this.preGenerated = preGenerated;
+        load();
     }
 
-    public void load(int shaderProgram){
+    private void load(){
         glGetError();
         int[] widthB = {0}, heightB = {0}, channelsB = {0};
         stbi_set_flip_vertically_on_load(true);
@@ -43,7 +44,7 @@ public class TextureAtlas {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glGenerateMipmap(GL_TEXTURE_2D);
-            glUniform1i(glGetUniformLocation(shaderProgram, "aTexture[" + (ID) + "]"), ID);
+            glUniform1i(glGetUniformLocation(BatchedRenderer.getShaderID(), "aTexture[" + (ID) + "]"), ID);
 
             int err = glGetError();
             if (err != 0) {

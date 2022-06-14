@@ -11,15 +11,16 @@ import game.rendering.math.Vector;
 public class GameObject {
     private static int objectCount = 0;
     private final int id;
+    protected boolean isUI = false;
+    private boolean hasTexture;
     private Matrix transform;
     private Vector frameTranslation;
     private int texture;
     private TextureAtlas textureAtlas;
     public boolean updated;
-    private float x, y, rot, width, height;
+    private float x, y, rot, width, height, r, g, b;
 
     public GameObject(float x, float y, float rot, float width, float height, int texture, TextureAtlas textureAtlas){
-    
         this.x = x;
         this.y = y;
         this.rot = rot;
@@ -33,12 +34,38 @@ public class GameObject {
             .scale(width, height, 1);
         this.texture = texture;
         this.textureAtlas = textureAtlas;
+        this.hasTexture = true;
+        this.r = 0;
+        this.g = 0;
+        this.b = 0;
         this.id = objectCount;
         BatchedRenderer.add(this);
         objectCount++;
     }
 
-    
+    public GameObject(float x, float y, float rot, float width, float height, float r, float g, float b){
+        this.x = x;
+        this.y = y;
+        this.rot = rot;
+        this.width = width;
+        this.height = height;
+        this.updated = true;
+        this.frameTranslation = new Vector(0, 0);
+        this.transform = Matrix.Identity(4)
+                .translate(x, y, 0)
+                .rotate(0, 0, rot)
+                .scale(width, height, 1);
+        this.texture = 0;
+        this.textureAtlas = null;
+        this.hasTexture = false;
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.id = objectCount;
+        BatchedRenderer.add(this);
+        objectCount++;
+    }
+
     /** 
      * @return this object's current transform matrix (an instance of Matrix)
      */
@@ -214,4 +241,10 @@ public class GameObject {
         return this.width;
     }
 
+    public boolean isUI() {return this.isUI; }
+
+    public boolean hasTexture() { return this.hasTexture; }
+    public float getR() { return this.r; }
+    public float getG() { return this.g; }
+    public float getB() { return this.b; }
 }
