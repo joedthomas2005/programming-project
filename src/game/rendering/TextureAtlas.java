@@ -69,7 +69,7 @@ public class TextureAtlas {
     public int texCount(){
         return this.rows * this.columns;
     }
-    public Matrix calculateMatrix(int texture){
+    private Matrix calculateMatrix(int texture){
         
         int textureX = texture;
         int textureY = 0;

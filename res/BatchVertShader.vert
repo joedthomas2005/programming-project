@@ -4,7 +4,6 @@ layout(location = 0) in vec2 aPosition;
 layout(location = 1) in vec3 aTexCoords; //Or color
 layout(location = 2) in float aTextureMap;
 layout(location = 3) in float aIsUI;
-layout(location = 4) in float aIsColor;
 
 uniform mat4 view;
 uniform mat4 projection;
@@ -23,5 +22,4 @@ void main(){
     }
     texCoords = aTexCoords;
     textureMap = aTextureMap;
-    isColor = aIsColor;
 }

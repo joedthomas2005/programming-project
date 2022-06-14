@@ -1,9 +1,8 @@
 package game.rendering;
-import game.GameObject;
 
 import java.util.ArrayList;
 public class Animation {
-    private final GameObject object;
+    private final RenderObject object;
     private final ArrayList<Integer> frames = new ArrayList<>();
     private final double frameInterval;
     private boolean playing;
@@ -11,7 +10,7 @@ public class Animation {
     private int currentFrame;
     private int pausedOn;
 
-    public Animation(GameObject object, double interval, int... frames){
+    public Animation(RenderObject object, double interval, int... frames){
         for(int frame : frames) this.frames.add(frame);
         this.frameInterval = interval;
         this.object = object;
@@ -20,7 +19,7 @@ public class Animation {
         this.startTime = 0;
         this.pausedOn = 0;
     }
-    public Animation(GameObject object, double interval, int start, int end){
+    public Animation(RenderObject object, double interval, int start, int end){
         for(int i = start; i < end; i++) this.frames.add(i);
         this.frameInterval = interval;
         this.pausedOn = 0;
@@ -59,7 +58,7 @@ public class Animation {
     public boolean isPlaying(){
         return this.playing;
     }
-    public GameObject getObject(){
+    public RenderObject getObject(){
         return this.object;
     }
 }

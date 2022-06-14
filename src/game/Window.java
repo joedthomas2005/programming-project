@@ -1,6 +1,8 @@
 package game;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33.*;
+
+import game.rendering.BatchedRenderer;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.opengl.GL;
 
@@ -32,6 +34,7 @@ public class Window {
         this.g = g;
         this.b = b;
         this.monitorHandle = 0;
+        create();
     }
 
     /**
@@ -74,6 +77,7 @@ public class Window {
      * Swap the display buffers and poll any glfw events. 
      */
     public void update(){
+        BatchedRenderer.draw();
         glfwSwapBuffers(this.windowHandle);
         Input.resetEvents();
         glfwPollEvents();

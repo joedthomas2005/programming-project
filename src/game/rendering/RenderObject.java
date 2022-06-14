@@ -1,4 +1,4 @@
-package game;
+package game.rendering;
 import game.rendering.BatchedRenderer;
 import game.rendering.TextureAtlas;
 import game.rendering.math.Matrix;
@@ -8,19 +8,18 @@ import game.rendering.math.Vector;
  * An abstract thing with spacial position, rotation and size and a texture from an atlas.
  * It contains a transform matrix.
  */
-public class GameObject {
+public class RenderObject {
     private static int objectCount = 0;
     private final int id;
-    protected boolean isUI = false;
-    private boolean hasTexture;
+    private final boolean hasTexture;
     private Matrix transform;
     private Vector frameTranslation;
     private int texture;
     private TextureAtlas textureAtlas;
     public boolean updated;
-    private float x, y, rot, width, height, r, g, b;
-
-    public GameObject(float x, float y, float rot, float width, float height, int texture, TextureAtlas textureAtlas){
+    private float x, y, rot, width, height;
+    private final float r, g, b;
+    public RenderObject(float x, float y, float rot, float width, float height, int texture, TextureAtlas textureAtlas){
         this.x = x;
         this.y = y;
         this.rot = rot;
@@ -43,7 +42,7 @@ public class GameObject {
         objectCount++;
     }
 
-    public GameObject(float x, float y, float rot, float width, float height, float r, float g, float b){
+    public RenderObject(float x, float y, float rot, float width, float height, float r, float g, float b){
         this.x = x;
         this.y = y;
         this.rot = rot;
@@ -65,6 +64,10 @@ public class GameObject {
         BatchedRenderer.add(this);
         objectCount++;
     }
+    //Overridden by UIObject class. Feels very bad and might be a nightmare later but I would rather not
+    //have to work out how to split the vertex generation per object.
+    public boolean isUI(){ return false; }
+
 
     /** 
      * @return this object's current transform matrix (an instance of Matrix)
@@ -111,21 +114,6 @@ public class GameObject {
         this.updated = true;
     }
 
-    public void moveForward(float amount){
-        Vector movement = new Vector(this.rot, amount);
-        this.x += movement.getX();
-        this.y += movement.getY();
-        this.updated = true;
-    }
-
-    public void moveDirection(float direction, float amount){
-        Vector movement = new Vector(direction, amount);
-        this.x += movement.getX();
-        this.y += movement.getY();
-        this.updated = true;
-
-    }
-
     /**
      * Apply a vector translation to this object's position and set its update flag to true.
      * Does not regenerate the transform matrix.
@@ -154,23 +142,10 @@ public class GameObject {
         this.y += frameTranslation.getY();
 
         this.transform = Matrix.Identity(4)
-        .translate(x, y, 0)
-        .rotate(0, 0, rot)
-        .scale(width, height, 1);
+            .translate(x, y, 0)
+            .rotate(0, 0, rot)
+            .scale(width, height, 1);
         this.frameTranslation = Vector.Vec2(0, 0);
-    }
-
-    public boolean willCollide(GameObject other, float x, float y, float otherX, float otherY){
-        return detectCollision(
-                this.x + x, this.y + y, this.width, this.height,
-                other.getX() + otherX, other.getY() + otherY, other.getWidth(), other.getHeight());
-    }
-    public boolean isColliding(GameObject other){
-        return detectCollision(this.x, this.y, this.width, this.height, other.getX(), other.getY(), other.getWidth(), other.getHeight());
-    }
-
-    private boolean detectCollision(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2){
-        return x1 + w1/2.0f > x2 - w2/2.0f && x1 - w1/2.0f < x2 + w2/2.0f && y1 + h1/2.0f > y2 - h2/2.0f && y1 - h1/2.0f < y2 + h2/2.0f;
     }
 
     /**
@@ -240,8 +215,6 @@ public class GameObject {
     public float getWidth(){
         return this.width;
     }
-
-    public boolean isUI() {return this.isUI; }
 
     public boolean hasTexture() { return this.hasTexture; }
     public float getR() { return this.r; }

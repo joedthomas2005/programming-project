@@ -2,11 +2,11 @@
 
 uniform sampler2D[8] aTexture;
 in float textureMap;
-in float isColor;
 in vec3 texCoords;
 out vec4 FragColor;
+
 void main(){
-    if(isColor < 0.5){
+    if(textureMap >= 0.0){
         if(textureMap == 0){
             FragColor = texture(aTexture[0], vec2(texCoords.x, texCoords.y));
         }

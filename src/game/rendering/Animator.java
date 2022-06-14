@@ -1,17 +1,15 @@
 package game.rendering;
 
-import game.GameObject;
-
 import java.util.HashMap;
 
 public class Animator {
-    private final HashMap<GameObject, HashMap<String, Animation>> animations = new HashMap<>();
+    private final HashMap<RenderObject, HashMap<String, Animation>> animations = new HashMap<>();
     private double time;
     public Animator(){
         this.time = 0;
     }
 
-    public void add(GameObject object, String name, Animation animation){
+    public void add(RenderObject object, String name, Animation animation){
         if(animations.containsKey(object)){
             animations.get(object).put(name, animation);
         }
@@ -21,7 +19,7 @@ public class Animator {
         }
     }
 
-    public void add(GameObject object, String name, float interval, int start, int end){
+    public void add(RenderObject object, String name, float interval, int start, int end){
         Animation anim = new Animation(object, interval, start, end);
         if(animations.containsKey(object)){
             animations.get(object).put(name, anim);
@@ -32,7 +30,7 @@ public class Animator {
         }
     }
 
-    public void add(GameObject object, String name, float interval, int... frames){
+    public void add(RenderObject object, String name, float interval, int... frames){
         Animation anim = new Animation(object, interval, frames);
         if(animations.containsKey(object)){
             animations.get(object).put(name, anim);
@@ -45,14 +43,14 @@ public class Animator {
 
     public void animate(double time) {
         this.time = time;
-        for (GameObject object : animations.keySet()) {
+        for (RenderObject object : animations.keySet()) {
             for (Animation anim : animations.get(object).values()) {
                 anim.update(time);
             }
         }
     }
 
-    public void start(GameObject object, String name){
+    public void start(RenderObject object, String name){
         for(Animation anim : animations.get(object).values()){
             if(anim.isPlaying()){
 //                System.out.println("WARNING: ANIMATION ALREADY PLAYING. INTERRUPTING.");
@@ -67,15 +65,15 @@ public class Animator {
                 .start(time);
     }
 
-    public void stop(GameObject object, String name){
+    public void stop(RenderObject object, String name){
         animations.get(object).get(name).stop();
     }
 
-    public void pause(GameObject object, String name){
+    public void pause(RenderObject object, String name){
         animations.get(object).get(name).pause();
     }
 
-    public void resume(GameObject object, String name){
+    public void resume(RenderObject object, String name){
         for(Animation anim : animations.get(object).values()){
             if(anim.isPlaying()){
                 anim.stop();

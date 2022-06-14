@@ -16,12 +16,16 @@ public class OrthoCamera2D {
     private final int viewLocation;
     private final int projectionLocation;
     private float x, y;
+    private final float width, height;
     private boolean updated;
 
     public OrthoCamera2D(float x, float y, float width, float height){
-        this.view = Matrix.Translation(-x, -y, 0);
+        this.x = -x;
+        this.y = -y;
+        this.width = width;
+        this.height = height;
+        this.view = Matrix.Translation(this.x, this.y, 0);
         this.projection = Matrix.Ortho(0, width, 0, height, -1, 1);
-
         this.viewLocation = glGetUniformLocation(BatchedRenderer.getShaderID(), "view");
         this.projectionLocation = glGetUniformLocation(BatchedRenderer.getShaderID(), "projection");
         this.updated = true;
@@ -37,23 +41,24 @@ public class OrthoCamera2D {
     public void move(float x, float y){
         this.x -= x;
         this.y -= y;
-        this.view = Matrix.Translation(this.x, this.y, 0);
         this.updated = true;
     }
 
+    public void setX(float x){
+        this.x = -x;
+        this.updated = true;
+    }
 
-    /**
-     * Send the view matrix of this camera to the shader if it has changed.
-     * If the camera has not moved then nothing will be done.
-     */
+    public void setY(float y){
+        this.y = -y;
+        this.updated = true;
+    }
+
     private void uploadViewUniform(){
+        this.view = Matrix.Translation(this.x, this.y, 0);
         glUniformMatrix4fv(viewLocation, true, view.toArray());
     }
 
-    /**
-     * Send the projection matrix of this camera to the shader.
-     * You should only have to do this once. 
-     */
     private void uploadProjectionUniform(){
         glUniformMatrix4fv(projectionLocation, true, projection.toArray());
     }
@@ -68,5 +73,20 @@ public class OrthoCamera2D {
             uploadViewUniform();
             updated = false;
         }
+    }
+
+    public float getWidth(){
+        return width;
+    }
+    public float getHeight(){
+        return height;
+    }
+
+    public float getX(){
+        return x;
+    }
+
+    public float getY(){
+        return y;
     }
 }
