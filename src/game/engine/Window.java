@@ -1,8 +1,8 @@
-package game;
+package game.engine;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33.*;
 
-import game.rendering.BatchedRenderer;
+import game.engine.rendering.BatchedRenderer;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.opengl.GL;
 

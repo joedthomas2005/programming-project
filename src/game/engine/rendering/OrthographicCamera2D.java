@@ -1,5 +1,5 @@
-package game.rendering;
-import game.rendering.math.Matrix;
+package game.engine.rendering;
+import game.engine.rendering.math.Matrix;
 
 import static org.lwjgl.opengl.GL33.*;
 
@@ -10,22 +10,24 @@ import static org.lwjgl.opengl.GL33.*;
  * view and perspective matrices are controlled by this and therefore the camera must know
  * the program where the uniforms are stored.
  */
-public class OrthoCamera2D {
+public class OrthographicCamera2D {
     private Matrix view;
     private final Matrix projection;
     private final int viewLocation;
     private final int projectionLocation;
-    private float x, y;
-    private final float width, height;
+    private float x;
+    private float y;
+    private final float width;
+    private final float height;
     private boolean updated;
 
-    public OrthoCamera2D(float x, float y, float width, float height){
+    public OrthographicCamera2D(float x, float y, float width, float height){
         this.x = -x;
         this.y = -y;
         this.width = width;
         this.height = height;
-        this.view = Matrix.Translation(this.x, this.y, 0);
-        this.projection = Matrix.Ortho(0, width, 0, height, -1, 1);
+        this.view = Matrix.translation(this.x, this.y, 0);
+        this.projection = Matrix.orthographic(0, width, 0, height, -1, 1);
         this.viewLocation = glGetUniformLocation(BatchedRenderer.getShaderID(), "view");
         this.projectionLocation = glGetUniformLocation(BatchedRenderer.getShaderID(), "projection");
         this.updated = true;
@@ -55,7 +57,7 @@ public class OrthoCamera2D {
     }
 
     private void uploadViewUniform(){
-        this.view = Matrix.Translation(this.x, this.y, 0);
+        this.view = Matrix.translation(this.x, this.y, 0);
         glUniformMatrix4fv(viewLocation, true, view.toArray());
     }
 

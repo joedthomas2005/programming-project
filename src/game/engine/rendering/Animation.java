@@ -1,4 +1,4 @@
-package game.rendering;
+package game.engine.rendering;
 
 import java.util.ArrayList;
 public class Animation {

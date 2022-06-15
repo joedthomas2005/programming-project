@@ -1,4 +1,4 @@
-package game.rendering;
+package game.engine.rendering;
 
 public class UIRenderObject extends RenderObject {
     public UIRenderObject(float x, float y, float rot, float width, float height, int texture, TextureAtlas atlas){

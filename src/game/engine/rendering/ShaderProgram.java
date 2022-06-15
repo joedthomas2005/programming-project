@@ -1,4 +1,4 @@
-package game.rendering;
+package game.engine.rendering;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.nio.file.Files;

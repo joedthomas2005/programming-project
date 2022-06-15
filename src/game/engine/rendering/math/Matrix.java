@@ -1,16 +1,14 @@
-package game.rendering.math;
-import java.util.ArrayList;
-
+package game.engine.rendering.math;
 /**
  * An any-sized matrix stored in row major notation.
  * (Bear in mind that openGL uses column major so .transpose() must be called before sending the data to the render program.) 
  */
 public class Matrix {
-    private final float[][] matrix;
+    private final float[][] data;
     private final int rows;
     private final int columns;
     public Matrix(float[]... values){
-        this.matrix = values;
+        this.data = values;
         this.rows = values.length;
         this.columns = values[0].length;
     }
@@ -22,7 +20,7 @@ public class Matrix {
     @Override
     public String toString(){
         StringBuilder string = new StringBuilder();
-        for(float[] row : matrix){
+        for(float[] row : data){
             for(float column : row){
                 string.append(column).append(" ");
             }
@@ -41,7 +39,7 @@ public class Matrix {
         float[][] result = new float[rows][columns];
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < columns; j++){
-                result[i][j] = this.matrix[i][j] + other.matrix[i][j];
+                result[i][j] = this.data[i][j] + other.data[i][j];
             }
         }
         return new Matrix(result);
@@ -59,7 +57,7 @@ public class Matrix {
             for(int column = 0; column < columns; column++){
                 result[row][column] = 0;
                 for(int i = 0; i < columns; i++){
-                    result[row][column] += matrix[row][i] * other.matrix[i][column];
+                    result[row][column] += data[row][i] * other.data[i][column];
                 }
             }
         }
@@ -74,7 +72,7 @@ public class Matrix {
             float[] items = new float[vector.items.length];
             for(int row = 0; row < this.rows; row++){
                 for(int column = 0; column < this.columns; column++){
-                    items[row] += this.matrix[row][column] * vector.items[column];
+                    items[row] += this.data[row][column] * vector.items[column];
                 }
             }
             return new Vector(items);
@@ -86,7 +84,7 @@ public class Matrix {
      * @param rows the number of rows for the identity matrix
      * @return Matrix
      */
-    public static Matrix Identity(int rows){
+    public static Matrix identity(int rows){
 
         float[][] result = new float[rows][rows];
         for(int i = 0; i < rows; i++){
@@ -107,11 +105,11 @@ public class Matrix {
      * @param z the z translation
      * @return Matrix
      */
-    public static Matrix Translation(float x, float y, float z){
-        Matrix result = Identity(4);
-        result.matrix[0][3] = x;
-        result.matrix[1][3] = y;
-        result.matrix[2][3] = z;
+    public static Matrix translation(float x, float y, float z){
+        Matrix result = identity(4);
+        result.data[0][3] = x;
+        result.data[1][3] = y;
+        result.data[2][3] = z;
         return result;
     }
 
@@ -123,11 +121,11 @@ public class Matrix {
      * @param z the z scale factor
      * @return Matrix
      */
-    public static Matrix Scaling(float x, float y, float z){
-        Matrix result = Identity(4);
-        result.matrix[0][0] = x;
-        result.matrix[1][1] = y;
-        result.matrix[2][2] = z;
+    public static Matrix scaling(float x, float y, float z){
+        Matrix result = identity(4);
+        result.data[0][0] = x;
+        result.data[1][1] = y;
+        result.data[2][2] = z;
         return result;
     }
 
@@ -139,7 +137,7 @@ public class Matrix {
      * @param roll rotation around the z axis
      * @return Matrix
      */
-    public static Matrix Rotation(float pitch, float yaw, float roll){
+    public static Matrix rotation(float pitch, float yaw, float roll){
         
         float pitchCosine = (float) Math.cos(Math.toRadians(pitch));
         float pitchSine = (float) Math.sin(Math.toRadians(pitch));
@@ -183,8 +181,8 @@ public class Matrix {
      * @param far the far clipping pane
      * @return Matrix
      */
-    public static Matrix Ortho(float left, float right, float bottom, float top, float near, float far){
-        return Matrix.Identity(4).translate(
+    public static Matrix orthographic(float left, float right, float bottom, float top, float near, float far){
+        return Matrix.identity(4).translate(
             -((right + left)/(right - left)),
             -((top + bottom)/(top - bottom)),
             -((far + near)/(far - near))
@@ -200,11 +198,11 @@ public class Matrix {
      * Return a transposed column-major version of this matrix. 
      * @return Matrix
      */
-    public Matrix T(){
+    public Matrix transpose(){
         float[][] result = new float[columns][rows];
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < columns; j++){
-                result[j][i] = matrix[i][j];
+                result[j][i] = data[i][j];
             }
         }
         return new Matrix(result);
@@ -219,7 +217,7 @@ public class Matrix {
      * @return Matrix
      */
     public Matrix translate(float x, float y, float z){
-        return this.multiply(Matrix.Translation(x, y, z));
+        return this.multiply(Matrix.translation(x, y, z));
     }
 
     
@@ -231,7 +229,7 @@ public class Matrix {
      * @return Matrix
      */
     public Matrix rotate(float pitch, float yaw, float roll){
-        return this.multiply(Matrix.Rotation(pitch, yaw, roll));
+        return this.multiply(Matrix.rotation(pitch, yaw, roll));
     }
 
     
@@ -243,7 +241,7 @@ public class Matrix {
      * @return Matrix
      */
     public Matrix scale(float x, float y, float z){
-        return this.multiply(Matrix.Scaling(x, y, z));
+        return this.multiply(Matrix.scaling(x, y, z));
     }
 
     
@@ -252,18 +250,13 @@ public class Matrix {
      * @return float[]
      */
     public float[] toArray(){
-        ArrayList<Float> data = new ArrayList<>();
+        float[] floats = new float[rows * columns];
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < columns; j++){
-                data.add(matrix[i][j]);
+                floats[i * columns + j] = this.data[i][j];
             }
         }
-        float[] result = new float[data.size()];
-        for(int i = 0; i < data.size(); i++){
-            result[i] = data.get(i);
-        }
-
-        return result;
+        return floats;
     }
 
 }

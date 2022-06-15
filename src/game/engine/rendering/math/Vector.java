@@ -1,4 +1,4 @@
-package game.rendering.math;
+package game.engine.rendering.math;
 public class Vector {
     float[] items = {};
     public Vector(float... items){
@@ -17,15 +17,15 @@ public class Vector {
 
     @Override
     public String toString(){
-        String string = "(";
+        StringBuilder string = new StringBuilder("(");
         for(int i = 0; i < this.items.length; i++){
-            string += this.items[i];
+            string.append(this.items[i]);
             if(i != this.items.length-1){
-                string += ", ";
+                string.append(", ");
             }
         }
-        string += ")";
-        return string;
+        string.append(")");
+        return string.toString();
     }
 
     public Vector toVec4(){
@@ -58,11 +58,11 @@ public class Vector {
     }
 
     public Vector multiply(float n){
-        float[] items = new float[this.items.length];
+        float[] resultantItems = new float[this.items.length];
         for(int i = 0; i < this.items.length; i++){
-            items[i] = this.items[i] * n;
+            resultantItems[i] = this.items[i] * n;
         }
-        return new Vector(items);
+        return new Vector(resultantItems);
     }
     public float getX(){
         return items[0];
@@ -80,12 +80,12 @@ public class Vector {
         return items[3];
     }
 
-    public static Vector Vec3(float x, float y, float z){
+    public static Vector vec3(float x, float y, float z){
         return new Vector(x, y, z, 1);
     }
 
-    public static Vector Vec2(float x, float y){
-        return new Vector(new float[]{x, y, 0, 1});
+    public static Vector vec2(float x, float y){
+        return new Vector(x, y, 0, 1);
     }
 
 }

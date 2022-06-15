@@ -1,4 +1,4 @@
-package game;
+package game.engine;
 
 import static org.lwjgl.glfw.GLFW.*;
 public final class Input {
@@ -9,6 +9,7 @@ public final class Input {
     private static double mouseX = 0;
     private static double mouseY = 0;
 
+    private Input(){}
     public static void enable(Window window){
 
         glfwSetKeyCallback(window.getWindow(), (long windowHandle, int key, int scancode, int action, int mods) -> {

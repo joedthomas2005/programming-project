@@ -1,24 +1,27 @@
-package game.rendering;
-import game.rendering.BatchedRenderer;
-import game.rendering.TextureAtlas;
-import game.rendering.math.Matrix;
-import game.rendering.math.Vector;
+package game.engine.rendering;
+import game.engine.rendering.math.Matrix;
+import game.engine.rendering.math.Vector;
 
 /**
  * An abstract thing with spacial position, rotation and size and a texture from an atlas.
  * It contains a transform matrix.
  */
 public class RenderObject {
-    private static int objectCount = 0;
-    private final int id;
     private final boolean hasTexture;
     private Matrix transform;
     private Vector frameTranslation;
     private int texture;
     private TextureAtlas textureAtlas;
-    public boolean updated;
-    private float x, y, rot, width, height;
-    private final float r, g, b;
+    private float[] vbo;
+    protected boolean updated;
+    private float x;
+    private float y;
+    private float rot;
+    private float width;
+    private float height;
+    private final float r;
+    private final float g;
+    private final float b;
     public RenderObject(float x, float y, float rot, float width, float height, int texture, TextureAtlas textureAtlas){
         this.x = x;
         this.y = y;
@@ -27,7 +30,7 @@ public class RenderObject {
         this.height = height;
         this.updated = true;
         this.frameTranslation = new Vector(0, 0);
-        this.transform = Matrix.Identity(4)
+        this.transform = Matrix.identity(4)
             .translate(x, y, 0)
             .rotate(0, 0, rot)
             .scale(width, height, 1);
@@ -37,9 +40,7 @@ public class RenderObject {
         this.r = 0;
         this.g = 0;
         this.b = 0;
-        this.id = objectCount;
         BatchedRenderer.add(this);
-        objectCount++;
     }
 
     public RenderObject(float x, float y, float rot, float width, float height, float r, float g, float b){
@@ -50,7 +51,7 @@ public class RenderObject {
         this.height = height;
         this.updated = true;
         this.frameTranslation = new Vector(0, 0);
-        this.transform = Matrix.Identity(4)
+        this.transform = Matrix.identity(4)
                 .translate(x, y, 0)
                 .rotate(0, 0, rot)
                 .scale(width, height, 1);
@@ -60,27 +61,45 @@ public class RenderObject {
         this.r = r;
         this.g = g;
         this.b = b;
-        this.id = objectCount;
         BatchedRenderer.add(this);
-        objectCount++;
     }
-    //Overridden by UIObject class. Feels very bad and might be a nightmare later but I would rather not
+    //Overridden by UIObject class. Feels very bad and might be a nightmare later, but I would rather not
     //have to work out how to split the vertex generation per object.
     public boolean isUI(){ return false; }
 
-
-    /** 
-     * @return this object's current transform matrix (an instance of Matrix)
-     */
-    public Matrix getTransform(){
-        return this.transform;
+    public float[] getVbo(){
+        return this.vbo;
     }
-    
-    /** 
-     * @return this object's texture (an index on a texture sheet)
-     */
-    public int getTexture(){
-        return this.texture;
+
+    public void buildVbo(){
+        this.vbo = new float[BatchedRenderer.verticesPerObject * BatchedRenderer.VERTEX_LENGTH];
+        for(int v = 0; v < BatchedRenderer.verticesPerObject; v++) {
+            float[] vertex = new float[BatchedRenderer.VERTEX_LENGTH];
+            for (int i = 0; i < BatchedRenderer.VERTEX_LENGTH; i++) {
+                vertex[i] = BatchedRenderer.vertices[v * BatchedRenderer.VERTEX_LENGTH + i];
+            }
+
+            Vector position = this.transform.multiply(Vector.vec2(vertex[0], vertex[1]));
+            Vector textureCoords;
+            float textureID;
+            if(hasTexture()){
+                textureCoords = this.textureAtlas.getMatrix(this.texture)
+                        .multiply(Vector.vec3(vertex[2], vertex[3], vertex[4]));
+                textureID = this.textureAtlas.getId();
+            }
+            else{
+                textureCoords = Vector.vec3(this.r, this.g, this.b);
+                textureID = -1.0f;
+            }
+
+            vbo[v * BatchedRenderer.VERTEX_LENGTH] = position.getX();
+            vbo[v * BatchedRenderer.VERTEX_LENGTH + 1] = position.getY();
+            vbo[v * BatchedRenderer.VERTEX_LENGTH + 3] = textureCoords.getY();
+            vbo[v * BatchedRenderer.VERTEX_LENGTH + 2] = textureCoords.getX();
+            vbo[v * BatchedRenderer.VERTEX_LENGTH + 4] = textureCoords.getZ();
+            vbo[v * BatchedRenderer.VERTEX_LENGTH + 5] = textureID;
+            vbo[v * BatchedRenderer.VERTEX_LENGTH + 6] = isUI() ? 1.0f : 0.0f;
+        }
     }
 
     /**
@@ -93,7 +112,7 @@ public class RenderObject {
     }
 
     /**
-     * @return the current texture atlas (spritesheet) which this object's texture is loaded from.
+     * @return the current texture atlas (sprite-sheet) which this object's texture is loaded from.
      */
     public TextureAtlas getTextureAtlas(){
         return this.textureAtlas;
@@ -141,11 +160,11 @@ public class RenderObject {
         this.x += frameTranslation.getX();
         this.y += frameTranslation.getY();
 
-        this.transform = Matrix.Identity(4)
+        this.transform = Matrix.identity(4)
             .translate(x, y, 0)
             .rotate(0, 0, rot)
             .scale(width, height, 1);
-        this.frameTranslation = Vector.Vec2(0, 0);
+        this.frameTranslation = Vector.vec2(0, 0);
     }
 
     /**

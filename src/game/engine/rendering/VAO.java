@@ -1,7 +1,6 @@
-package game.rendering;
+package game.engine.rendering;
 import static org.lwjgl.opengl.GL33.*;
 
-import java.util.ArrayList;
 
 /**
  * A wrapper for an openGL Vertex Array Object.
@@ -23,7 +22,7 @@ public class VAO {
         this.vertices = vertices;
         this.indices = indices;
 
-        this.ID = glGenVertexArrays();        
+        this.ID = glGenVertexArrays();
         this.VBO = glGenBuffers();
         this.EBO = glGenBuffers();
 

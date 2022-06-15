@@ -1,4 +1,4 @@
-package game.rendering;
+package game.engine.rendering;
 
 import java.util.HashMap;
 
@@ -43,8 +43,8 @@ public class Animator {
 
     public void animate(double time) {
         this.time = time;
-        for (RenderObject object : animations.keySet()) {
-            for (Animation anim : animations.get(object).values()) {
+        for (HashMap<String, Animation> entry : animations.values()) {
+            for (Animation anim : entry.values()) {
                 anim.update(time);
             }
         }
@@ -53,7 +53,6 @@ public class Animator {
     public void start(RenderObject object, String name){
         for(Animation anim : animations.get(object).values()){
             if(anim.isPlaying()){
-//                System.out.println("WARNING: ANIMATION ALREADY PLAYING. INTERRUPTING.");
                 anim.stop();
                 break;
             }
