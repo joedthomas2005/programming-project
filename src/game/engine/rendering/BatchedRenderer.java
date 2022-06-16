@@ -9,7 +9,12 @@ public class BatchedRenderer {
     protected static int verticesPerObject = 0;
     protected static int indicesPerObject = 0;
     private static final VAO vao = new VAO();
+    private static int viewUniform;
+    private static int projectionUniform;
     private static final ArrayList<RenderObject> objects = new ArrayList<>();
+    private static final ArrayList<RenderObject> visible = new ArrayList<>();
+    private static OrthographicCamera2D viewport;
+
     protected static float[] vertices = new float[]{};
     private static int[] eboData = new int[]{};
     private static int[] indices = new int[]{};
@@ -18,7 +23,7 @@ public class BatchedRenderer {
 
     private BatchedRenderer(){}
 
-    public static void initializeRectRenderer(){
+    public static void initializeRectRenderer(OrthographicCamera2D camera){
         initialize(new float[]{
                 0.5f, 0.5f, 1.0f, 1.0f, 0, 0, 0,
                 0.5f, -0.5f, 1.0f, 0.0f, 0, 0, 0,
@@ -27,13 +32,14 @@ public class BatchedRenderer {
         }, new int[]{
                 0, 1, 3,
                 3, 2, 1
-        });
+        }, camera);
     }
 
-    public static void initialize(float[] objectVertices, int[] objectIndices){
+    public static void initialize(float[] objectVertices, int[] objectIndices, OrthographicCamera2D camera){
         objectsUpdated = false;
         vertices = objectVertices;
         indices = objectIndices;
+        viewport = camera;
         verticesPerObject = vertices.length / VERTEX_LENGTH;
         indicesPerObject = indices.length;
         shader = new ShaderProgram("Batch");
@@ -50,8 +56,19 @@ public class BatchedRenderer {
         if(err != 0){
             System.err.println("FAILED TO CREATE VAO: " + err);
         }
+
+        viewUniform = glGetUniformLocation(getShaderID(), "view");
+        projectionUniform = glGetUniformLocation(getShaderID(), "projection");
+        uploadProjectionUniform();
     }
 
+    private static void uploadViewUniform(){
+        glUniformMatrix4fv(viewUniform, true, viewport.getView().toArray());
+    }
+
+    private static void uploadProjectionUniform(){
+        glUniformMatrix4fv(projectionUniform, true, viewport.getProjection().toArray());
+    }
     public static void add(RenderObject object){
         if(object.isUI()){
             objects.add(object);
@@ -65,9 +82,25 @@ public class BatchedRenderer {
 
     private static void updateVertexData(){
         boolean updated = false;
-        float[] vboData = new float[verticesPerObject * VERTEX_LENGTH * objects.size()];
-        for(int i = 0; i < objects.size(); i++){
-            RenderObject object = objects.get(i);
+        if(viewport.getUpdated()){
+            viewport.updateViewMatrix();
+            uploadViewUniform();
+            visible.clear();
+            for(RenderObject object : objects){
+                if((object.getX() + object.getWidth() / 2.0f >= viewport.getX() &&
+                object.getX() - object.getWidth() / 2.0f <= viewport.getX() + viewport.getWidth() &&
+                object.getY() + object.getHeight() / 2.0f >= viewport.getY() &&
+                object.getY() - object.getHeight() / 2.0f <= viewport.getY() + viewport.getHeight()) ||
+                object.isUI()){
+                    visible.add(object);
+                }
+            }
+            viewport.setUpdated(false);
+        }
+
+        float[] vboData = new float[verticesPerObject * VERTEX_LENGTH * visible.size()];
+        for(int i = 0; i < visible.size(); i++){
+            RenderObject object = visible.get(i);
             updated = object.updated || updated;
             if(object.updated){
                 object.generateMatrix();
@@ -121,5 +154,5 @@ public class BatchedRenderer {
     public static int getShaderID(){
         return shader.getID();
     }
-
+    public static OrthographicCamera2D getViewport(){ return viewport; }
 }

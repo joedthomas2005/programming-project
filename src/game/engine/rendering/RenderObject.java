@@ -111,13 +111,6 @@ public class RenderObject {
         this.updated = true;
     }
 
-    /**
-     * @return the current texture atlas (sprite-sheet) which this object's texture is loaded from.
-     */
-    public TextureAtlas getTextureAtlas(){
-        return this.textureAtlas;
-    }
-
     public void setTextureAtlas(TextureAtlas atlas){
         this.textureAtlas = atlas;
         this.updated = true;
