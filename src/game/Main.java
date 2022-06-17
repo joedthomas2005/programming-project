@@ -10,7 +10,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 class Main{
     public static void main(String[] args) {
-        Window window = new Window(1920, 1080, "Stardew Valley", true, 1, 0, 0, 0);
+        Window window = new Window(3840, 2400, "Stardew Valley", true, 1, 0, 0, 0);
         Input.enable(window);
         OrthographicCamera2D camera = new OrthographicCamera2D(-1920/2.0f, -1080/2.0f, 1920, 1080);
         BatchedRenderer.initializeRectRenderer(camera);

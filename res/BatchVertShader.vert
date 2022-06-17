@@ -12,6 +12,7 @@ out float textureMap;
 out vec2 position;
 out vec3 texCoords;
 out float isColor;
+out float isUI;
 
 void main(){
 
@@ -24,4 +25,5 @@ void main(){
     position = aPosition;
     texCoords = aTexCoords;
     textureMap = aTextureMap;
+    isUI = aIsUI;
 }
