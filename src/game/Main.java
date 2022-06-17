@@ -18,8 +18,8 @@ class Main{
         TextureAtlas martin = new TextureAtlas("res/elf.png", 3, 1, true);
         TextureAtlas dirt = new TextureAtlas("res/StardewDirt.png", 12, 12, true);
 
-        new UIRenderObject(50, 1030, 0, 100, 100, 120, dirt);
-        RenderObject elf = new RenderObject(0, 0, 0, 160, 280, 0, martin);
+        UIRenderObject dirtSquare = new UIRenderObject(50, 1030, 0, 100, 100, 120, dirt);
+        RenderObject elf = new RenderObject(0, 0, 0, 80, 140, 0, martin);
 
         Random r = new Random(System.nanoTime());
         for(int i = -100; i < 100; i++){
@@ -30,12 +30,13 @@ class Main{
 
         animator.add(elf, "walk", 0.3f, 1, 3);
         animator.add(elf, "idle", 0, 0);
+        animator.add(dirtSquare, "textureScroll", 0.1f, 0, 144);
         double time = glfwGetTime();
         double lastTime;
         double delta;
 
         animator.start(elf, "idle");
-
+        animator.start(dirtSquare, "textureScroll");
         while(!window.shouldClose()){
             lastTime = time;
             time = glfwGetTime();

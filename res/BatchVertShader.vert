@@ -9,6 +9,7 @@ uniform mat4 view;
 uniform mat4 projection;
 
 out float textureMap;
+out vec2 position;
 out vec3 texCoords;
 out float isColor;
 
@@ -20,6 +21,7 @@ void main(){
     else{
         gl_Position = projection * vec4(aPosition, 0, 1);
     }
+    position = aPosition;
     texCoords = aTexCoords;
     textureMap = aTextureMap;
 }

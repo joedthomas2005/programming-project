@@ -3,6 +3,7 @@
 uniform sampler2D[8] aTexture;
 in float textureMap;
 in vec3 texCoords;
+in vec2 position;
 out vec4 FragColor;
 
 void main(){
