@@ -42,7 +42,8 @@ public class BatchedRenderer {
         viewport = camera;
         verticesPerObject = vertices.length / VERTEX_LENGTH;
         indicesPerObject = indices.length;
-        shader = new ShaderProgram("Batch");
+        shader = new ShaderProgram("Stardew_Clone/res/BatchVertShader.vert",
+                "Stardew_Clone/res/BatchFragShader.frag");
         shader.use();
         vao.use();
         vao.uploadVertexData(GL_DYNAMIC_DRAW);

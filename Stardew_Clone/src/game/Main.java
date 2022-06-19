@@ -15,8 +15,8 @@ class Main{
         OrthographicCamera2D camera = new OrthographicCamera2D(-1920/2.0f, -1080/2.0f, 1920, 1080);
         BatchedRenderer.initializeRectRenderer(camera);
         Animator animator = new Animator();
-        TextureAtlas martin = new TextureAtlas("res/elf.png", 3, 1, true);
-        TextureAtlas dirt = new TextureAtlas("res/StardewDirt.png", 12, 12, true);
+        TextureAtlas martin = new TextureAtlas("Stardew_Clone/res/elf.png", 3, 1, true);
+        TextureAtlas dirt = new TextureAtlas("Stardew_Clone/res/StardewDirt.png", 12, 12, true);
 
         UIRenderObject dirtSquare = new UIRenderObject(50, 1030, 0, 100, 100, 120, dirt);
         RenderObject elf = new RenderObject(0, 0, 0, 80, 140, 0, martin);

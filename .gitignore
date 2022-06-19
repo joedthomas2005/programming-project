@@ -23,4 +23,5 @@
 hs_err_pid*
 *.iml
 .idea/
-out/
+Stardew_Clone/out
+Launcher/node_modules

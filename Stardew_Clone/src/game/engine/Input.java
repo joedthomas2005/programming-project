@@ -1,5 +1,4 @@
 package game.engine;
-
 import static org.lwjgl.glfw.GLFW.*;
 public final class Input {
     private static final boolean[] keysHeld = new boolean[GLFW_KEY_LAST];

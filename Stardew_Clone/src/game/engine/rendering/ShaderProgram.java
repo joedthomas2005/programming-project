@@ -51,8 +51,8 @@ public class ShaderProgram {
         System.out.println("LOADING SHADER SOURCE");
         
         try{
-            vertexSource = Files.readString(Path.of("res/" + vertexPath));
-            fragSource = Files.readString(Path.of("res/" + fragPath));
+            vertexSource = Files.readString(Path.of(vertexPath));
+            fragSource = Files.readString(Path.of(fragPath));
         }
         catch(IOException exception){
             System.err.println("COULDN'T LOAD SHADER SOURCE.\nError is " + exception);
