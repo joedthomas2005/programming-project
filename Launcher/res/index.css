@@ -1,0 +1,31 @@
+#mainContent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#launchBtn {
+    background-color: greenyellow;
+    border: none;
+    margin-top: 50%;
+    width: 75px;
+    height: 25px;
+    transition-duration: 0.4s;
+    border-radius: 4px;
+}
+
+#launchBtn:hover {
+    background-color: white;
+    border: 1px solid black;
+}
+
+#titlebar {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+#profilepic {
+    margin-top: 7px;
+}
