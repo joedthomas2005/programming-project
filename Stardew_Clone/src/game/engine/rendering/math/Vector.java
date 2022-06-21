@@ -1,6 +1,9 @@
 package game.engine.rendering.math;
+
+import game.engine.rendering.Ens;
+
 public class Vector {
-    float[] items = {};
+    float[] items;
     public Vector(float... items){
         this.items = items;
     }
@@ -15,6 +18,15 @@ public class Vector {
         };
     }
 
+    public Vector(Ens thing, int items){
+        this.items = new float[items];
+        this.items[0] = thing.getX();
+        this.items[1] = thing.getY();
+        for(int i = 2; i < items - 1; i++){
+            this.items[i] = 0;
+        }
+        this.items[items - 1] = 1;
+    }
     @Override
     public String toString(){
         StringBuilder string = new StringBuilder("(");
@@ -79,10 +91,22 @@ public class Vector {
     public float getW(){
         return items[3];
     }
+    public int getItemCount(){
+        return items.length;
+    }
 
-    public static Vector vec3(float x, float y, float z){
+    public static Vector vec4(float x, float y, float z){
         return new Vector(x, y, z, 1);
     }
+    public static Vector vec4(Vector vector) {
+        if(vector.getItemCount() == 2){
+            return new Vector(vector.getX(), vector.getY(), 0, 1);
+        }
+        else{
+            return new Vector(vector.getX(), vector.getY(), vector.getZ(), 1);
+        }
+    }
+
 
     public static Vector vec2(float x, float y){
         return new Vector(x, y, 0, 1);

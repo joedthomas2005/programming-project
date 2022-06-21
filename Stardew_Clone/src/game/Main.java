@@ -27,6 +27,8 @@ class Main{
                 new RenderObject(i * 100.0f, j * 100.0f, 0, 100, 100, r.nextInt(0, 144), dirt);
             }
         }
+        BatchedRenderer.setAmbientLight(0, 0, 1, 0.3f);
+        PointLight redLight = new PointLight(0, 0, 1, 0, 0, 3);
 
         animator.add(elf, "walk", 0.3f, 1, 3);
         animator.add(elf, "idle", 0, 0);
@@ -41,6 +43,7 @@ class Main{
             lastTime = time;
             time = glfwGetTime();
             delta = time - lastTime;
+            System.out.println(1.0f/delta);
             animator.animate(time);
             if(Input.keyIsDown(GLFW_KEY_W)){
                 elf.move(0, (float) (delta) * 500);
@@ -54,7 +57,6 @@ class Main{
             if(Input.keyIsDown(GLFW_KEY_A)){
                 elf.move((float) (-500 * delta), 0);
             }
-
             if(Input.keyPressedDown(GLFW_KEY_W) || Input.keyPressedDown(GLFW_KEY_S) ||
             Input.keyPressedDown(GLFW_KEY_A) || Input.keyPressedDown(GLFW_KEY_D)){
                 animator.resume(elf, "walk");
@@ -65,6 +67,8 @@ class Main{
             }
             camera.setX(elf.getX() - 1920 / 2.0f);
             camera.setY(elf.getY() - 1080 / 2.0f);
+            redLight.setX(elf.getX());
+            redLight.setY(elf.getY());
             if(Input.keyPressedDown(GLFW_KEY_ESCAPE)){
                 window.close();
             }

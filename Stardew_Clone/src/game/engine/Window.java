@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL;
  * There must be an instance of this class for there to be an openGL context. This creates a glfw and GLCapabilities context and also 
  * handles window operations such as swapping buffers, closing and resizing. 
  */
-public class Window {
+public class Window{
 
     private int width;
     private int height;

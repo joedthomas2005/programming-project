@@ -6,7 +6,7 @@ import game.engine.rendering.math.Vector;
  * An abstract thing with spacial position, rotation and size and a texture from an atlas.
  * It contains a transform matrix.
  */
-public class RenderObject {
+public class RenderObject implements Ens{
     private final boolean hasTexture;
     private Matrix transform;
     private Vector frameTranslation;
@@ -84,11 +84,11 @@ public class RenderObject {
             float textureID;
             if(hasTexture()){
                 textureCoords = this.textureAtlas.getMatrix(this.texture)
-                        .multiply(Vector.vec3(vertex[2], vertex[3], vertex[4]));
+                        .multiply(Vector.vec4(vertex[2], vertex[3], vertex[4]));
                 textureID = this.textureAtlas.getId();
             }
             else{
-                textureCoords = Vector.vec3(this.r, this.g, this.b);
+                textureCoords = Vector.vec4(this.r, this.g, this.b);
                 textureID = -1.0f;
             }
 

@@ -6,7 +6,7 @@ import game.engine.rendering.math.Matrix;
  * No transformation is done based on depth or perspective so this is ideal for 
  * 2D rendering.
  */
-public class OrthographicCamera2D {
+public class OrthographicCamera2D implements Ens{
     private Matrix view;
     private final Matrix projection;
     private float x;
@@ -33,19 +33,32 @@ public class OrthographicCamera2D {
      */
 
     public void move(float x, float y){
+        if((x < 0) || (x > 0) && (y < 0) || (y > 0)){
+            setUpdated(true);
+        }
         this.x -= x;
         this.y -= y;
-        this.updated = true;
     }
 
     public void setX(float x){
+        if(-x != this.x){
+            setUpdated(true);
+        }
         this.x = -x;
-        this.updated = true;
     }
 
     public void setY(float y){
+        if(-y != this.y){
+            setUpdated(true);
+        }
         this.y = -y;
-        this.updated = true;
+    }
+
+    public boolean isVisible(Ens object){
+        return (object.getX() + object.getWidth() / 2.0f >= -x &&
+                object.getX() - object.getWidth() / 2.0f <= -x + width &&
+                object.getY() + object.getHeight() / 2.0f >= -y &&
+                object.getY() - object.getHeight() / 2.0f <= -y + height);
     }
 
     public boolean getUpdated(){
