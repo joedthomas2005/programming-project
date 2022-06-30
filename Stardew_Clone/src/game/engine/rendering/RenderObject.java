@@ -2,6 +2,9 @@ package game.engine.rendering;
 import game.engine.rendering.math.Matrix;
 import game.engine.rendering.math.Vector;
 
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+
 /**
  * An abstract thing with spacial position, rotation and size and a texture from an atlas.
  * It contains a transform matrix.
@@ -40,7 +43,7 @@ public class RenderObject implements Ens{
         this.r = 0;
         this.g = 0;
         this.b = 0;
-        BatchedRenderer.add(this);
+        Renderer.add(this);
     }
 
     public RenderObject(float x, float y, float rot, float width, float height, float r, float g, float b){
@@ -61,7 +64,7 @@ public class RenderObject implements Ens{
         this.r = r;
         this.g = g;
         this.b = b;
-        BatchedRenderer.add(this);
+        Renderer.add(this);
     }
     //Overridden by UIObject class. Feels very bad and might be a nightmare later, but I would rather not
     //have to work out how to split the vertex generation per object.
@@ -72,11 +75,11 @@ public class RenderObject implements Ens{
     }
 
     public void buildVbo(){
-        this.vbo = new float[BatchedRenderer.verticesPerObject * BatchedRenderer.VERTEX_LENGTH];
-        for(int v = 0; v < BatchedRenderer.verticesPerObject; v++) {
-            float[] vertex = new float[BatchedRenderer.VERTEX_LENGTH];
-            for (int i = 0; i < BatchedRenderer.VERTEX_LENGTH; i++) {
-                vertex[i] = BatchedRenderer.vertices[v * BatchedRenderer.VERTEX_LENGTH + i];
+        this.vbo = new float[Renderer.verticesPerObject * Renderer.VERTEX_LENGTH];
+        for(int v = 0; v < Renderer.verticesPerObject; v++) {
+            float[] vertex = new float[Renderer.VERTEX_LENGTH];
+            for (int i = 0; i < Renderer.VERTEX_LENGTH; i++) {
+                vertex[i] = Renderer.vertices[v * Renderer.VERTEX_LENGTH + i];
             }
 
             Vector position = this.transform.multiply(Vector.vec2(vertex[0], vertex[1]));
@@ -92,13 +95,13 @@ public class RenderObject implements Ens{
                 textureID = -1.0f;
             }
 
-            vbo[v * BatchedRenderer.VERTEX_LENGTH] = position.getX();
-            vbo[v * BatchedRenderer.VERTEX_LENGTH + 1] = position.getY();
-            vbo[v * BatchedRenderer.VERTEX_LENGTH + 3] = textureCoords.getY();
-            vbo[v * BatchedRenderer.VERTEX_LENGTH + 2] = textureCoords.getX();
-            vbo[v * BatchedRenderer.VERTEX_LENGTH + 4] = textureCoords.getZ();
-            vbo[v * BatchedRenderer.VERTEX_LENGTH + 5] = textureID;
-            vbo[v * BatchedRenderer.VERTEX_LENGTH + 6] = isUI() ? 1.0f : 0.0f;
+            vbo[v * Renderer.VERTEX_LENGTH] = position.getX();
+            vbo[v * Renderer.VERTEX_LENGTH + 1] = position.getY();
+            vbo[v * Renderer.VERTEX_LENGTH + 3] = textureCoords.getY();
+            vbo[v * Renderer.VERTEX_LENGTH + 2] = textureCoords.getX();
+            vbo[v * Renderer.VERTEX_LENGTH + 4] = textureCoords.getZ();
+            vbo[v * Renderer.VERTEX_LENGTH + 5] = textureID;
+            vbo[v * Renderer.VERTEX_LENGTH + 6] = isUI() ? 1.0f : 0.0f;
         }
     }
 
@@ -232,4 +235,5 @@ public class RenderObject implements Ens{
     public float getR() { return this.r; }
     public float getG() { return this.g; }
     public float getB() { return this.b; }
+
 }

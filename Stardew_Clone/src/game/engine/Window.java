@@ -2,7 +2,7 @@ package game.engine;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33.*;
 
-import game.engine.rendering.BatchedRenderer;
+import game.engine.rendering.Renderer;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.opengl.GL;
 
@@ -77,7 +77,7 @@ public class Window{
      * Swap the display buffers and poll any glfw events. 
      */
     public void update(){
-        BatchedRenderer.draw();
+        Renderer.draw();
         glfwSwapBuffers(this.windowHandle);
         Input.resetEvents();
         glfwPollEvents();

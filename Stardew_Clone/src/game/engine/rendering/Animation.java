@@ -2,28 +2,28 @@ package game.engine.rendering;
 
 import java.util.ArrayList;
 public class Animation {
-    private final RenderObject object;
-    private final ArrayList<Integer> frames = new ArrayList<>();
+    private int[] frames;
     private final double frameInterval;
     private boolean playing;
     private double startTime;
     private int currentFrame;
     private int pausedOn;
 
-    public Animation(RenderObject object, double interval, int... frames){
-        for(int frame : frames) this.frames.add(frame);
+    public Animation(double interval, int... frames){
+        this.frames = frames;
         this.frameInterval = interval;
-        this.object = object;
         this.playing = false;
         this.currentFrame = 0;
         this.startTime = 0;
         this.pausedOn = 0;
     }
     public Animation(RenderObject object, double interval, int start, int end){
-        for(int i = start; i < end; i++) this.frames.add(i);
+        this.frames = new int[end-start];
+        for(int i = start; i < end; i++){
+            this.frames[i - start] = i;
+        }
         this.frameInterval = interval;
         this.pausedOn = 0;
-        this.object = object;
         this.playing = false;
         this.currentFrame = 0;
         this.startTime = 0;
@@ -36,10 +36,7 @@ public class Animation {
     }
 
     public void update(double time){
-        if(playing) {
-            currentFrame = (pausedOn + (int) Math.floor((time - startTime) / frameInterval)) % frames.size();
-            this.object.setTexture(frames.get(currentFrame));
-        }
+        this.currentFrame = (pausedOn + (int) Math.floor((time - startTime) / frameInterval)) % frames.length;
     }
 
     public void stop(){
@@ -58,7 +55,8 @@ public class Animation {
     public boolean isPlaying(){
         return this.playing;
     }
-    public RenderObject getObject(){
-        return this.object;
+
+    public int getCurrentFrame(){
+        return this.frames[currentFrame];
     }
 }

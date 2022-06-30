@@ -1,19 +1,24 @@
 package game.engine.rendering;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class BatchedRenderer {
+public final class Renderer {
+    /**
+     * This namespace allows things to be drawn to the screen. It is basically a big wrapper for lots of OpenGL.
+     */
     public static final int VERTEX_LENGTH = 7;
-    protected static int verticesPerObject = 0;
-    protected static int indicesPerObject = 0;
+    public static int verticesPerObject = 0;
+    public static int indicesPerObject = 0;
     public static final int MAX_LIGHTS = 10;
     private static final VAO vao = new VAO();
     private static int viewUniform;
     private static int projectionUniform;
     private static final ArrayList<RenderObject> objects = new ArrayList<>();
-    private static final ArrayList<RenderObject> visible = new ArrayList<>();
+    private static final FastLinkedList<RenderObject> visible = new FastLinkedList<>();
     private static final ArrayList<PointLight> lights = new ArrayList<>();
     private static PointLight[] visibleLights = new PointLight[MAX_LIGHTS];
     private static final int[] lightPositionUniforms = new int[MAX_LIGHTS];
@@ -21,14 +26,14 @@ public class BatchedRenderer {
     private static final int[] lightIntensityUniforms = new int[MAX_LIGHTS];
     private static int ambientLightUniform;
     private static OrthographicCamera2D viewport;
-    protected static float[] vertices = new float[]{};
+    public static float[] vertices = new float[]{};
     private static int[] eboData = new int[]{};
     private static int[] indices = new int[]{};
     private static boolean objectsUpdated;
     private static boolean lightsUpdated;
     private static ShaderProgram shader;
 
-    private BatchedRenderer(){}
+    private Renderer(){}
 
     public static void initializeRectRenderer(OrthographicCamera2D camera){
         initialize(new float[]{
@@ -154,31 +159,33 @@ public class BatchedRenderer {
         viewport.setUpdated(false);
     }
     private static void updateVertexData(){
-        boolean updated = false;
+        AtomicBoolean updated = new AtomicBoolean(false);
         if(viewport.getUpdated()){
             viewport.updateViewMatrix();
             uploadViewUniform();
             visible.clear();
             for(RenderObject object : objects){
-                if(viewport.isVisible(object) || object.isUI()){
+                if(viewport.isVisible(object) || object.isUI()) {
                     visible.add(object);
                 }
             }
         }
         float[] vboData = new float[verticesPerObject * VERTEX_LENGTH * visible.size()];
-        for(int i = 0; i < visible.size(); i++){
-            RenderObject object = visible.get(i);
-            updated = object.updated || updated;
+        AtomicInteger curObject = new AtomicInteger();
+        visible.forEach((RenderObject object) -> {
+            updated.set(object.updated || updated.get());
             if(object.updated){
                 object.generateMatrix();
                 object.buildVbo();
                 object.updated = false;
             }
             for(int j = 0; j < object.getVbo().length; j++){
-                vboData[verticesPerObject * VERTEX_LENGTH * i + j] = object.getVbo()[j];
+                vboData[verticesPerObject * VERTEX_LENGTH * curObject.get() + j] = object.getVbo()[j];
             }
-        }
-        if(updated) {
+            curObject.getAndIncrement();
+        });
+
+        if(updated.get()) {
             uploadVertexData(vboData);
         }
     }
@@ -186,7 +193,7 @@ public class BatchedRenderer {
 
     private static void updateIndexData(){
         if(objectsUpdated){
-            int objectCount = BatchedRenderer.objects.size();
+            int objectCount = Renderer.objects.size();
             eboData = new int[objectCount * indicesPerObject];
             for(int i = 0; i < objectCount; i++){
                 int offset = i * verticesPerObject;
@@ -223,5 +230,4 @@ public class BatchedRenderer {
     public static int getShaderID(){
         return shader.getID();
     }
-    public static OrthographicCamera2D getViewport(){ return viewport; }
 }

@@ -20,7 +20,7 @@ public class PointLight implements Ens{
         this.b = b;
         this.intensity = intensity;
         this.updated = true;
-        BatchedRenderer.add(this);
+        Renderer.add(this);
     }
 
     public float getX(){
