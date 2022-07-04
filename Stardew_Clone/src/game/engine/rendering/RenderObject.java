@@ -25,6 +25,7 @@ public class RenderObject implements Ens{
     private final float r;
     private final float g;
     private final float b;
+    private boolean hide = false;
     public RenderObject(float x, float y, float rot, float width, float height, int texture, TextureAtlas textureAtlas){
         this.x = x;
         this.y = y;
@@ -66,6 +67,19 @@ public class RenderObject implements Ens{
         this.b = b;
         Renderer.add(this);
     }
+
+    public void show(){
+        hide = false;
+    }
+
+    public void hide(){
+        hide = true;
+    }
+
+    public boolean getHidden(){
+        return hide;
+    }
+
     //Overridden by UIObject class. Feels very bad and might be a nightmare later, but I would rather not
     //have to work out how to split the vertex generation per object.
     public boolean isUI(){ return false; }
@@ -75,33 +89,37 @@ public class RenderObject implements Ens{
     }
 
     public void buildVbo(){
-        this.vbo = new float[Renderer.verticesPerObject * Renderer.VERTEX_LENGTH];
-        for(int v = 0; v < Renderer.verticesPerObject; v++) {
-            float[] vertex = new float[Renderer.VERTEX_LENGTH];
-            for (int i = 0; i < Renderer.VERTEX_LENGTH; i++) {
-                vertex[i] = Renderer.vertices[v * Renderer.VERTEX_LENGTH + i];
-            }
+        if(hide){
+            this.vbo = new float[]{};
+        }
+        else {
+            this.vbo = new float[Renderer.verticesPerObject * Renderer.VERTEX_LENGTH];
+            for (int v = 0; v < Renderer.verticesPerObject; v++) {
+                float[] vertex = new float[Renderer.VERTEX_LENGTH];
+                for (int i = 0; i < Renderer.VERTEX_LENGTH; i++) {
+                    vertex[i] = Renderer.vertices[v * Renderer.VERTEX_LENGTH + i];
+                }
 
-            Vector position = this.transform.multiply(Vector.vec2(vertex[0], vertex[1]));
-            Vector textureCoords;
-            float textureID;
-            if(hasTexture()){
-                textureCoords = this.textureAtlas.getMatrix(this.texture)
-                        .multiply(Vector.vec4(vertex[2], vertex[3], vertex[4]));
-                textureID = this.textureAtlas.getId();
-            }
-            else{
-                textureCoords = Vector.vec4(this.r, this.g, this.b);
-                textureID = -1.0f;
-            }
+                Vector position = this.transform.multiply(Vector.vec2(vertex[0], vertex[1]));
+                Vector textureCoords;
+                float textureID;
+                if (hasTexture()) {
+                    textureCoords = this.textureAtlas.getMatrix(this.texture)
+                            .multiply(Vector.vec4(vertex[2], vertex[3], vertex[4]));
+                    textureID = this.textureAtlas.getId();
+                } else {
+                    textureCoords = Vector.vec4(this.r, this.g, this.b);
+                    textureID = -1.0f;
+                }
 
-            vbo[v * Renderer.VERTEX_LENGTH] = position.getX();
-            vbo[v * Renderer.VERTEX_LENGTH + 1] = position.getY();
-            vbo[v * Renderer.VERTEX_LENGTH + 3] = textureCoords.getY();
-            vbo[v * Renderer.VERTEX_LENGTH + 2] = textureCoords.getX();
-            vbo[v * Renderer.VERTEX_LENGTH + 4] = textureCoords.getZ();
-            vbo[v * Renderer.VERTEX_LENGTH + 5] = textureID;
-            vbo[v * Renderer.VERTEX_LENGTH + 6] = isUI() ? 1.0f : 0.0f;
+                vbo[v * Renderer.VERTEX_LENGTH] = position.getX();
+                vbo[v * Renderer.VERTEX_LENGTH + 1] = position.getY();
+                vbo[v * Renderer.VERTEX_LENGTH + 3] = textureCoords.getY();
+                vbo[v * Renderer.VERTEX_LENGTH + 2] = textureCoords.getX();
+                vbo[v * Renderer.VERTEX_LENGTH + 4] = textureCoords.getZ();
+                vbo[v * Renderer.VERTEX_LENGTH + 5] = textureID;
+                vbo[v * Renderer.VERTEX_LENGTH + 6] = isUI() ? 1.0f : 0.0f;
+            }
         }
     }
 

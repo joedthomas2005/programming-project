@@ -32,6 +32,7 @@ public final class Renderer {
     private static boolean objectsUpdated;
     private static boolean lightsUpdated;
     private static ShaderProgram shader;
+    private static int lastNonUI = 0;
 
     private Renderer(){}
 
@@ -149,7 +150,7 @@ public final class Renderer {
             objects.add(object);
         }
         else{
-            objects.add(0, object);
+            objects.add(lastNonUI++, object);
         }
         object.buildVbo();
         objectsUpdated = true;

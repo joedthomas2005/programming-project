@@ -18,7 +18,7 @@ public final class Animator {
     }
 
     public static void add(RenderObject object, String name, float interval, int start, int end){
-        Animation anim = new Animation(object, interval, start, end);
+        Animation anim = new Animation(interval, start, end);
         if(animations.containsKey(object)){
             animations.get(object).put(name, anim);
         }
@@ -54,13 +54,16 @@ public final class Animator {
     public static void start(RenderObject object, String name){
         for(Animation anim : animations.get(object).values()){
             if(anim.isPlaying()){
-                anim.stop();
+                anim.pause();
                 break;
             }
         }
         animations.get(object).get(name).start(time);
     }
 
+    public static boolean isPlaying(RenderObject object, String name) {
+        return animations.get(object).get(name).isPlaying();
+    }
     public static void stop(RenderObject object, String name){
         animations.get(object).get(name).stop();
     }
@@ -72,7 +75,7 @@ public final class Animator {
     public static void resume(RenderObject object, String name){
         for(Animation anim : animations.get(object).values()){
             if(anim.isPlaying()){
-                anim.stop();
+                anim.pause();
             }
         }
         animations.get(object).get(name).resume(time);

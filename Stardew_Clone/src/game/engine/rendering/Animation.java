@@ -17,7 +17,7 @@ public class Animation {
         this.startTime = 0;
         this.pausedOn = 0;
     }
-    public Animation(RenderObject object, double interval, int start, int end){
+    public Animation(double interval, int start, int end){
         this.frames = new int[end-start];
         for(int i = start; i < end; i++){
             this.frames[i - start] = i;

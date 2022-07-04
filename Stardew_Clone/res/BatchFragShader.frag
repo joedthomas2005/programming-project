@@ -20,7 +20,7 @@ vec4 getColor(vec2 vertexPosition, vec4 unlitColor, vec3 lightColor, float light
     vec3 finalColour = unlitColor.xyz * lightColor;
     //0.01 is just the best coefficient for distance I've found
     //and the +1 is to prevent the intensity being infinite at distance = 0
-    return vec4(finalColour * lightIntensity * (1.0/(0.01 * distance + 1)), unlitColor.w);
+    return vec4(finalColour * lightIntensity * (1.0/(0.02 * distance + 1)), unlitColor.w);
 }
 
 void main(){
