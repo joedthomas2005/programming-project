@@ -30,10 +30,11 @@ public class Player extends RenderObject {
         this.inventoryFrame = null;
     }
 
-    public void showInventory(Window window){
-        if(this.inventoryFrame == null) {
-        }
-    }
+//    public void showInventory(Window window){
+//        if(this.inventoryFrame == null) {
+//            this.inventoryFrame = new UIRenderObject(1920/2.0f, 1080/2.0f, 0, 500, 500, )
+//        }
+//    }
     private void addItem(Item item){
         inventory.add(item);
     }

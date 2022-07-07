@@ -1,4 +1,7 @@
 package game.engine.rendering.math;
+
+import game.engine.Logger;
+
 /**
  * An any-sized matrix stored in row major notation.
  * (Bear in mind that openGL uses column major so .transpose() must be called before sending the data to the render program.) 
@@ -65,7 +68,7 @@ public class Matrix {
     }
     public Vector multiply(Vector vector){
         if(vector.items.length != this.columns){
-            System.err.println("INVALID MATRIX VECTOR MULTIPLICATION ATTEMPTED");
+            Logger.error("INVALID MATRIX VECTOR MULTIPLICATION ATTEMPTED");
             return vector;
         }
         else{

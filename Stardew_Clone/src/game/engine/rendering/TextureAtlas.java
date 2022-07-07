@@ -1,5 +1,6 @@
 package game.engine.rendering;
 
+import game.engine.Logger;
 import game.engine.rendering.math.Matrix;
 
 import java.nio.ByteBuffer;
@@ -50,11 +51,11 @@ public class TextureAtlas {
 
             int err = glGetError();
             if (err != 0) {
-                System.err.println("ERROR CREATING TEXTURE ATLAS: " + err);
+                Logger.error("ERROR CREATING TEXTURE ATLAS: " + err);
             }
         }
         else{
-            System.err.println("COULD NOT LOAD TEXTURE ATLAS DATA");
+            Logger.error("COULD NOT LOAD TEXTURE ATLAS DATA");
         }
         if(preGenerated){
             this.preGeneratedMatrices = new Matrix[rows * columns];

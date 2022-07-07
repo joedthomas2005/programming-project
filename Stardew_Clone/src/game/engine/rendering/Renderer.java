@@ -1,5 +1,7 @@
 package game.engine.rendering;
 
+import game.engine.Logger;
+
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -68,7 +70,7 @@ public final class Renderer {
 
         int err = glGetError();
         if(err != 0){
-            System.err.println("FAILED TO CREATE VAO: " + err);
+            Logger.error("failed to create vao: " + err);
         }
 
         for(int i = 0; i < MAX_LIGHTS; i++){
@@ -101,15 +103,15 @@ public final class Renderer {
             if(visibleLights[i] != null){
                 glUniform2fv(lightPositionUniforms[i], new float[]{visibleLights[i].getX(), visibleLights[i].getY()});
                 if(glGetError() != 0){
-                    System.err.println("FAILED TO BIND POSITION UNIFORM");
+                    Logger.error("FAILED TO BIND POSITION UNIFORM");
                 }
                 glUniform3fv(lightColorUniforms[i], new float[]{visibleLights[i].getR(), visibleLights[i].getG(), visibleLights[i].getB()});
                 if(glGetError() != 0){
-                    System.err.println("FAILED TO BIND COLOR UNIFORM");
+                    Logger.error("FAILED TO BIND COLOR UNIFORM");
                 }
                 glUniform1f(lightIntensityUniforms[i], visibleLights[i].getIntensity());
                 if(glGetError() != 0){
-                    System.err.println("FAILED TO BIND INTENSITY UNIFORM");
+                    Logger.error("FAILED TO BIND INTENSITY UNIFORM");
                 }
             }
             else{

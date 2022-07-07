@@ -1,4 +1,6 @@
 package game.engine.rendering;
+import game.engine.Logger;
+
 import java.nio.file.Path;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,76 +49,76 @@ public class ShaderProgram {
      * Create an openGL shader program.
      */
     private void create(){
-        System.out.println("STARTED SHADER BINDING: " + glGetError());
-        System.out.println("LOADING SHADER SOURCE");
+        Logger.log("STARTED SHADER BINDING: " + glGetError());
+        Logger.log("LOADING SHADER SOURCE");
         
         try{
             vertexSource = Files.readString(Path.of(vertexPath));
             fragSource = Files.readString(Path.of(fragPath));
         }
         catch(IOException exception){
-            System.err.println("COULDN'T LOAD SHADER SOURCE.\nError is " + exception);
+            Logger.error("COULDN'T LOAD SHADER SOURCE.\nError is " + exception);
         }
 
         int vShader = glCreateShader(GL_VERTEX_SHADER);
         int fShader = glCreateShader(GL_FRAGMENT_SHADER);
-        System.out.println("SHADERS CREATED: " + glGetError());
+        Logger.log("SHADERS CREATED: " + glGetError());
 
         glShaderSource(vShader, vertexSource);
         glShaderSource(fShader, fragSource);
-        System.out.println("SHADER SOURCE CODE LOADED: " + glGetError());
+        Logger.log("SHADER SOURCE CODE LOADED: " + glGetError());
         
         glCompileShader(vShader);
         if(glGetShaderi(vShader, GL_COMPILE_STATUS) != GL_TRUE){
-            System.err.println("ERROR COMPILING VERTEX SHADER: " + glGetShaderInfoLog(vShader));
-            System.err.println("TRYING TO LOAD FALLBACK VERTEX SHADER.");
+            Logger.error("ERROR COMPILING VERTEX SHADER: " + glGetShaderInfoLog(vShader));
+            Logger.error("TRYING TO LOAD FALLBACK VERTEX SHADER.");
             try{
                 vertexSource = Files.readString(Path.of("res/" + fallbackVertexPath));
             } catch (IOException e) {
-                System.err.println("COULDN'T LOAD SHADER SOURCE.\nError is " + e);
+                Logger.error("COULDN'T LOAD SHADER SOURCE.\nError is " + e);
             }
             glShaderSource(vShader, vertexSource);
             glCompileShader(vShader);
             if(glGetShaderi(vShader, GL_COMPILE_STATUS) != GL_TRUE){
-                System.err.println("COMPILING VERTEX SHADER FALLBACK FAILED: " + glGetShaderInfoLog(vShader));
+                Logger.error("COMPILING VERTEX SHADER FALLBACK FAILED: " + glGetShaderInfoLog(vShader));
             }
             else{
-                System.err.println("FALLBACK VERTEX SHADER COMPILED SUCCESSFULLY");
+                Logger.error("FALLBACK VERTEX SHADER COMPILED SUCCESSFULLY");
             }
         }
 
         glCompileShader(fShader);
         if(glGetShaderi(fShader, GL_COMPILE_STATUS) != GL_TRUE){
-            System.err.println("ERROR COMPILING FRAGMENT SHADER: " + glGetShaderInfoLog(fShader));
-            System.err.println("TRYING TO LOAD FALLBACK FRAGMENT SHADER.");
+            Logger.error("ERROR COMPILING FRAGMENT SHADER: " + glGetShaderInfoLog(fShader));
+            Logger.error("TRYING TO LOAD FALLBACK FRAGMENT SHADER.");
             try{
                 fragSource = Files.readString(Path.of("res/"+ fallbackFragmentPath));
             } catch (IOException e){
-                System.err.println("COULDN'T LOAD SHADER SOURCE. \nError is " + e);
+                Logger.error("COULDN'T LOAD SHADER SOURCE. \nError is " + e);
             }
             glShaderSource(fShader, fragSource);
             glCompileShader(fShader);
             if(glGetShaderi(fShader, GL_COMPILE_STATUS) != GL_TRUE){
-                System.err.println("COMPILING FRAGMENT SHADER FALLBACK FAILED " + glGetShaderInfoLog(fShader));
+                Logger.error("COMPILING FRAGMENT SHADER FALLBACK FAILED " + glGetShaderInfoLog(fShader));
             }
             else{
-                System.err.println("FALLBACK FRAGMENT SHADER COMPILED SUCCESSFULLY.");
+                Logger.error("FALLBACK FRAGMENT SHADER COMPILED SUCCESSFULLY.");
             }
         }
-        System.out.println("SHADER SOURCE CODE COMPILED: " + glGetError());
+        Logger.log("SHADER SOURCE CODE COMPILED: " + glGetError());
 
         int program = glCreateProgram();
-        System.out.println("SHADER PROGRAM CREATED: " + glGetError());
+        Logger.log("SHADER PROGRAM CREATED: " + glGetError());
 
         glAttachShader(program, vShader);
         glAttachShader(program, fShader);
-        System.out.println("SHADERS ATTACHED: " + glGetError());
+        Logger.log("SHADERS ATTACHED: " + glGetError());
 
         glLinkProgram(program);
-        System.out.println("SHADER PROGRAM LINKED: " + glGetError());
+        Logger.log("SHADER PROGRAM LINKED: " + glGetError());
         glDeleteShader(vShader);
         glDeleteShader(fShader);
-        System.out.println("SHADERS DELETED: " + glGetError());
+        Logger.log("SHADERS DELETED: " + glGetError());
 
         this.programID = program;
     }

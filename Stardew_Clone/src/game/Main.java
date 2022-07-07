@@ -1,16 +1,19 @@
 package game;
 
 import game.engine.Input;
+import game.engine.Logger;
 import game.engine.Window;
 import game.engine.rendering.*;
 
+import java.io.File;
 import java.util.Random;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 class Main{
     public static void main(String[] args) {
-        Window window = new Window(1920, 1080, "Stardew Valley", true, 1, 0, 0, 0);
+
+        Window window = new Window(1920, 1080, "Stardew Valley", false, 1, 0, 0, 0);
         Input.enable(window);
         OrthographicCamera2D camera = new OrthographicCamera2D(-1920/2.0f, -1080/2.0f, 1920, 1080);
         Renderer.initializeRectRenderer(camera);
@@ -32,7 +35,7 @@ class Main{
                 -100, -100
         );
         Renderer.setAmbientLight(1, 1, 1, 0.8f);
-        PointLight playerLight = new PointLight(0, 0, 1, 1, 1, 1);
+        PointLight playerLight = new PointLight(0, 0, 1, 1, 1, 10);
 
         Animator.add(dirtSquare, "textureScroll", 0.1f, 0, 144);
         double time = glfwGetTime();
@@ -44,8 +47,8 @@ class Main{
             lastTime = time;
             time = glfwGetTime();
             delta = time - lastTime;
-            player.update(delta);
             Animator.animate(time);
+            player.update(delta);
 
             if(Input.keyPressedDown(GLFW_KEY_SPACE)){
                 if(player.getHidden()){
