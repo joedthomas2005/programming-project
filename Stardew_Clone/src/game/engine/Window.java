@@ -77,9 +77,9 @@ public final class Window{
      * Swap the display buffers and poll any glfw events. 
      */
     public void update(){
-        Renderer.draw();
+        Renderer.getInstance().draw();
         glfwSwapBuffers(this.windowHandle);
-        Input.resetEvents();
+        InputController.getInstance().resetEvents();
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }

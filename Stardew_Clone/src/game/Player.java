@@ -1,8 +1,7 @@
 package game;
 
-import game.engine.Input;
+import game.engine.InputController;
 import game.engine.Item;
-import game.engine.Window;
 import game.engine.rendering.*;
 
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ public class Player extends RenderObject {
     private UIRenderObject inventoryFrame;
     public Player(Animation walk, Animation idle, TextureAtlas atlas, float x, float y){
         super(x, y, 0, PLAYER_WIDTH, PLAYER_HEIGHT, 0, atlas);
+
         Animator.add(this, "walk", walk);
         Animator.add(this, "idle", idle);
         Animator.start(this, "idle");
@@ -43,27 +43,27 @@ public class Player extends RenderObject {
         return inventory;
     }
     public void update(double delta){
-        if(Input.keyIsDown(KEY_UP) || Input.keyIsDown(SEC_KEY_UP)){
+        if(InputController.keyIsDown(KEY_UP) || InputController.keyIsDown(SEC_KEY_UP)){
             move(0, (float) (delta) * 500);
         }
-        if(Input.keyIsDown(KEY_DOWN) || Input.keyIsDown(SEC_KEY_DOWN)){
+        if(InputController.keyIsDown(KEY_DOWN) || InputController.keyIsDown(SEC_KEY_DOWN)){
             move(0, (float) (-500 * delta));
         }
-        if(Input.keyIsDown(KEY_RIGHT) || Input.keyIsDown(SEC_KEY_RIGHT)){
+        if(InputController.keyIsDown(KEY_RIGHT) || InputController.keyIsDown(SEC_KEY_RIGHT)){
             move((float) delta * 500, 0);
         }
-        if(Input.keyIsDown(KEY_LEFT) || Input.keyIsDown(SEC_KEY_LEFT)){
+        if(InputController.keyIsDown(KEY_LEFT) || InputController.keyIsDown(SEC_KEY_LEFT)){
             move((float) (-500 * delta), 0);
         }
-        if(Input.keyPressedDown(KEY_UP) || Input.keyPressedDown(KEY_DOWN) ||
-                Input.keyPressedDown(KEY_LEFT) || Input.keyPressedDown(KEY_RIGHT) ||
-                Input.keyPressedDown(SEC_KEY_UP) || Input.keyPressedDown(SEC_KEY_DOWN) ||
-                Input.keyPressedDown(SEC_KEY_LEFT) || Input.keyPressedDown(SEC_KEY_RIGHT)){
+        if(InputController.keyPressedDown(KEY_UP) || InputController.keyPressedDown(KEY_DOWN) ||
+                InputController.keyPressedDown(KEY_LEFT) || InputController.keyPressedDown(KEY_RIGHT) ||
+                InputController.keyPressedDown(SEC_KEY_UP) || InputController.keyPressedDown(SEC_KEY_DOWN) ||
+                InputController.keyPressedDown(SEC_KEY_LEFT) || InputController.keyPressedDown(SEC_KEY_RIGHT)){
             Animator.resume(this, "walk");
-        } else if (!(Input.keyIsDown(KEY_UP) || Input.keyIsDown(KEY_DOWN) ||
-                Input.keyIsDown(KEY_LEFT) || Input.keyIsDown(KEY_RIGHT) ||
-                Input.keyIsDown(SEC_KEY_UP) || Input.keyIsDown(SEC_KEY_DOWN) ||
-                Input.keyIsDown(SEC_KEY_LEFT) || Input.keyIsDown(SEC_KEY_RIGHT)) &&
+        } else if (!(InputController.keyIsDown(KEY_UP) || InputController.keyIsDown(KEY_DOWN) ||
+                InputController.keyIsDown(KEY_LEFT) || InputController.keyIsDown(KEY_RIGHT) ||
+                InputController.keyIsDown(SEC_KEY_UP) || InputController.keyIsDown(SEC_KEY_DOWN) ||
+                InputController.keyIsDown(SEC_KEY_LEFT) || InputController.keyIsDown(SEC_KEY_RIGHT)) &&
                 Animator.isPlaying(this, "walk")){
                     Animator.pause(this, "walk");
                     Animator.start(this, "idle");

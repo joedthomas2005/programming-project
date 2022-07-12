@@ -68,7 +68,7 @@ public class Matrix {
     }
     public Vector multiply(Vector vector){
         if(vector.items.length != this.columns){
-            Logger.error("INVALID MATRIX VECTOR MULTIPLICATION ATTEMPTED");
+            Main.logger.error("INVALID MATRIX VECTOR MULTIPLICATION ATTEMPTED");
             return vector;
         }
         else{

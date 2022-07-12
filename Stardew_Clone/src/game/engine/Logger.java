@@ -1,51 +1,53 @@
 package game.engine;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.function.Consumer;
+import java.time.temporal.ChronoUnit;
 
-public final class Logger {
-    private Logger(){}
+public class Logger {
 
-    private static Consumer<String> errorHandler = System.err::println;
-    private static Consumer<String> warningHandler = System.out::println;
-    private static Consumer<String> messageHandler = System.out::println;
-
-    public static void error(Exception error) {
+    private Logger() {}
+    private static Logger instance = null;
+    public static Logger getInstance(){
+        if(instance == null){
+            instance = new Logger();
+        }
+        return instance;
+    }
+    public void error(Exception error) {
         error(error.getMessage());
     }
-    public static void error(String error){
-        Logger.errorHandler.accept(formatError(error));
+    public void error(String error){
+        this.handleError(formatError(error));
     }
 
-    public static void warn(String warning){
-        Logger.warningHandler.accept(formatWarning(warning));
+    public void warn(String warning){
+        this.handleWarning(formatWarning(warning));
     }
 
-    public static void log(String message){
-        Logger.messageHandler.accept(formatMessage(message));
+    public void log(String message){
+        this.handleMessage(formatMessage(message));
     }
 
-    private static String formatMessage(String message){
-        return LocalTime.now() + ":" + message;
-    }
-    private static String formatError(String message){
-        return LocalTime.now() + ":ERROR:\"" + message.toUpperCase();
+    private void handleMessage(String message){
+        System.out.println(message);
     }
 
-    private static String formatWarning(String message) {
-        return LocalTime.now() + ":Warning:\"" + message;
+    private void handleWarning(String warning){
+        System.out.println(warning);
     }
 
-    public static void setErrorHandler(Consumer<String> handler){
-        Logger.errorHandler = handler;
+    private void handleError(String error){
+        System.err.println(error);
     }
 
-    public static void setWarningHandler(Consumer<String> handler){
-        Logger.warningHandler = handler;
+    private String formatMessage(String message){
+        return LocalTime.now().truncatedTo(ChronoUnit.MILLIS) + ":" + message;
+    }
+    private String formatError(String message){
+        return LocalTime.now().truncatedTo(ChronoUnit.MILLIS) + ":ERROR:\"" + message.toUpperCase();
     }
 
-    public static void setMessageHandler(Consumer<String> handler){
-        Logger.messageHandler = handler;
+    private String formatWarning(String message) {
+        return LocalTime.now().truncatedTo(ChronoUnit.MILLIS) + ":Warning:\"" + message;
     }
 }
