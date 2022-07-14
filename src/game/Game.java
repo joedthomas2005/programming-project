@@ -18,8 +18,10 @@ public class Game implements Runnable{
     private final Logger logger;
     private final OrthographicCamera2D camera;
     private final Animator animator;
+    public static String resourceRoot;
 
-    public Game(Window window){
+    public Game(Window window, String resourceRoot){
+        Game.resourceRoot = resourceRoot;
         this.logger = Logger.getInstance();
         logger.log("BEGAN LOADING");
         this.window = window;
@@ -41,8 +43,8 @@ public class Game implements Runnable{
         renderer.initialize(camera);
         logger.log("RENDERER INITIALIZED");
 
-        TextureAtlas martin = new TextureAtlas("res/textures/elf.png", 3, 1, true);
-        TextureAtlas dirt = new TextureAtlas("res/textures/StardewDirt.png", 12, 12, true);
+        TextureAtlas martin = new TextureAtlas(resourceRoot + "textures/elf.png", 3, 1, true);
+        TextureAtlas dirt = new TextureAtlas(resourceRoot + "textures/StardewDirt.png", 12, 12, true);
         martin.load();
         dirt.load();
 
