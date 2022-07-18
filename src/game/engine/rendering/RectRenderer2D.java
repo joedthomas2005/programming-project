@@ -1,5 +1,6 @@
 package game.engine.rendering;
 
+import game.Game;
 import game.engine.Logger;
 
 import java.util.ArrayList;
@@ -60,8 +61,8 @@ public final class RectRenderer2D {
         this.lights = new ArrayList<>();
         this.vao = new VAO();
         this.viewport = null;
-        this.shader = new ShaderProgram("res/shaders/BatchVertShader.vert",
-                "res/shaders/BatchFragShader.frag");
+        this.shader = new ShaderProgram(Game.resourceRoot + "shaders/BatchVertShader.vert",
+                Game.resourceRoot + "shaders/BatchFragShader.frag");
     }
 
     public static RectRenderer2D getInstance(){

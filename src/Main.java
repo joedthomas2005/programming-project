@@ -9,6 +9,15 @@ class Main{
             int height = Integer.parseInt(args[1]);
             boolean fullscreen = Boolean.parseBoolean(args[2]);
             int swapInterval = Integer.parseInt(args[3]);
+            String resourceRoot;
+            try{
+                resourceRoot = args[4];
+                if(resourceRoot.charAt(resourceRoot.length() - 1) != '/'){
+                    resourceRoot = resourceRoot + '/';
+                }
+            } catch(ArrayIndexOutOfBoundsException e){
+                resourceRoot = "res/";
+            }
             String title = "Stardew Valley";
 
             System.out.println("CURRENT DIRECTORY "+ System.getProperty("user.dir"));
@@ -19,7 +28,8 @@ class Main{
                             fullscreen,
                             swapInterval,
                             0,0,0
-                    )
+                    ),
+                    resourceRoot
             );
             game.run();
 
