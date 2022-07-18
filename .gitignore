@@ -25,6 +25,8 @@ hs_err_pid*
 .idea/
 out/
 build/
+build.ps1
+run.ps1
 !/lib/
 !/lib/lwjgl.jar
 
